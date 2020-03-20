@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -30,13 +30,22 @@
 		830BCB1C23C8CEAA00C43F8F /* ResultPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830BCB1B23C8CEAA00C43F8F /* ResultPage.swift */; };
 		8313CC9123EA087C00505DD4 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8313CC9023EA087C00505DD4 /* SplashViewController.swift */; };
 		8325C08A23E859A800A5F554 /* Intro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325C08923E859A800A5F554 /* Intro.swift */; };
+		833448B92415B3F6004E2BCD /* InformationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833448B82415B3F6004E2BCD /* InformationVC.swift */; };
 		8337785423C77AC700E77162 /* AnaSayfa.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8337785323C77AC700E77162 /* AnaSayfa.swift */; };
+		83426A95241EE09100562758 /* Result_Loading_Wastage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426A94241EE09000562758 /* Result_Loading_Wastage.swift */; };
+		83426A97241F9ABA00562758 /* Result_Loading_Injections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426A96241F9ABA00562758 /* Result_Loading_Injections.swift */; };
+		83426A99241F9D1A00562758 /* Result_Wastage_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426A98241F9D1A00562758 /* Result_Wastage_1.swift */; };
+		83426A9B241FA3D700562758 /* Result_Wastage_2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426A9A241FA3D700562758 /* Result_Wastage_2.swift */; };
+		83426A9D241FA8E900562758 /* Result_Wastage_3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426A9C241FA8E900562758 /* Result_Wastage_3.swift */; };
+		83426A9F2421193A00562758 /* Result_Injections_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426A9E2421193A00562758 /* Result_Injections_1.swift */; };
+		83426AA124211AEB00562758 /* Result_Injections_2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426AA024211AEB00562758 /* Result_Injections_2.swift */; };
+		83426AA324211B3300562758 /* Result_Injections_3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83426AA224211B3300562758 /* Result_Injections_3.swift */; };
+		83426AA52421520A00562758 /* adm_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 83426AA424213A2A00562758 /* adm_video.mp4 */; };
 		836127AC23F48687000BD131 /* PickerDeneme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836127AB23F48687000BD131 /* PickerDeneme.swift */; };
 		8364989C23F83DD50007133D /* Intro2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8364989B23F83DD50007133D /* Intro2ViewController.swift */; };
 		8364989E23F83ED30007133D /* Intro3ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8364989D23F83ED30007133D /* Intro3ViewController.swift */; };
 		836498A023F83EE80007133D /* Intro4ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8364989F23F83EE80007133D /* Intro4ViewController.swift */; };
 		836B972723E86C430030F11F /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B972623E86C430030F11F /* VideoViewController.swift */; };
-		836B972923E86D4C0030F11F /* roche_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 836B972823E86D4C0030F11F /* roche_video.mp4 */; };
 		8373EF7E23F86A0A001E81AE /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8373EF7D23F86A0A001E81AE /* PopUpViewController.swift */; };
 		8381CE1323EB34AD007B7B40 /* CheckInternet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381CE1223EB34AD007B7B40 /* CheckInternet.swift */; };
 		8399A80E23D9F8AE00AAE5B6 /* open_sans_semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8399A80B23D9F8AE00AAE5B6 /* open_sans_semibold.ttf */; };
@@ -45,6 +54,8 @@
 		839A7CCD24068681001A26FD /* YeniAnaSayfa.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839A7CCC24068681001A26FD /* YeniAnaSayfa.swift */; };
 		839E0CDF23D9F729002C4159 /* Trade Gothic LT Bold Condensed No. 20.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 839E0CDE23D9F728002C4159 /* Trade Gothic LT Bold Condensed No. 20.ttf */; };
 		839E6E2C2405A40100049608 /* PİCKERVİEWDENEME.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839E6E2B2405A40100049608 /* PİCKERVİEWDENEME.swift */; };
+		83A777F92416A41C00EBBB0E /* Q_Wastage_Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A777F82416A41C00EBBB0E /* Q_Wastage_Result.swift */; };
+		83CAD7E624158F78001E0436 /* ForgotPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83CAD7E524158F78001E0436 /* ForgotPassword.swift */; };
 		83F0DCE223D8AB52008BD7A9 /* GifPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F0DCE123D8AB52008BD7A9 /* GifPlayer.swift */; };
 		83F0DCE423D8AC94008BD7A9 /* loa_gif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 83F0DCE323D8AC94008BD7A9 /* loa_gif.gif */; };
 		83F0DCE623D8AD73008BD7A9 /* LaunchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F0DCE523D8AD73008BD7A9 /* LaunchViewController.swift */; };
@@ -106,27 +117,38 @@
 		830BCB1B23C8CEAA00C43F8F /* ResultPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultPage.swift; sourceTree = "<group>"; };
 		8313CC9023EA087C00505DD4 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		8325C08923E859A800A5F554 /* Intro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro.swift; sourceTree = "<group>"; };
+		833448B82415B3F6004E2BCD /* InformationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationVC.swift; sourceTree = "<group>"; };
 		8337785323C77AC700E77162 /* AnaSayfa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnaSayfa.swift; sourceTree = "<group>"; };
 		8337785723C77BA700E77162 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		83426A94241EE09000562758 /* Result_Loading_Wastage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Result_Loading_Wastage.swift; path = "/Users/omernasuhiaydemir/Desktop/OnboardingSample-master/OnboardingExample/Result_Loading_Wastage.swift"; sourceTree = "<absolute>"; };
+		83426A96241F9ABA00562758 /* Result_Loading_Injections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Loading_Injections.swift; sourceTree = "<group>"; };
+		83426A98241F9D1A00562758 /* Result_Wastage_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Wastage_1.swift; sourceTree = "<group>"; };
+		83426A9A241FA3D700562758 /* Result_Wastage_2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Wastage_2.swift; sourceTree = "<group>"; };
+		83426A9C241FA8E900562758 /* Result_Wastage_3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Wastage_3.swift; sourceTree = "<group>"; };
+		83426A9E2421193A00562758 /* Result_Injections_1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Injections_1.swift; sourceTree = "<group>"; };
+		83426AA024211AEB00562758 /* Result_Injections_2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Injections_2.swift; sourceTree = "<group>"; };
+		83426AA224211B3300562758 /* Result_Injections_3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result_Injections_3.swift; sourceTree = "<group>"; };
+		83426AA424213A2A00562758 /* adm_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = adm_video.mp4; sourceTree = "<group>"; };
 		836127AB23F48687000BD131 /* PickerDeneme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerDeneme.swift; sourceTree = "<group>"; };
-		8364989B23F83DD50007133D /* Intro2ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro2ViewController.swift; sourceTree = "<group>"; };
-		8364989D23F83ED30007133D /* Intro3ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro3ViewController.swift; sourceTree = "<group>"; };
-		8364989F23F83EE80007133D /* Intro4ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro4ViewController.swift; sourceTree = "<group>"; };
+		8364989B23F83DD50007133D /* Intro2ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Intro2ViewController.swift; path = ../Intro2ViewController.swift; sourceTree = "<group>"; };
+		8364989D23F83ED30007133D /* Intro3ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Intro3ViewController.swift; path = ../Intro3ViewController.swift; sourceTree = "<group>"; };
+		8364989F23F83EE80007133D /* Intro4ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Intro4ViewController.swift; path = ../Intro4ViewController.swift; sourceTree = "<group>"; };
 		836B972623E86C430030F11F /* VideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
-		836B972823E86D4C0030F11F /* roche_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = roche_video.mp4; sourceTree = "<group>"; };
 		8373EF7D23F86A0A001E81AE /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
 		8381CE1223EB34AD007B7B40 /* CheckInternet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInternet.swift; sourceTree = "<group>"; };
 		8399A80B23D9F8AE00AAE5B6 /* open_sans_semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = open_sans_semibold.ttf; sourceTree = "<group>"; };
 		8399A80C23D9F8AE00AAE5B6 /* open_sans_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = open_sans_bold.ttf; sourceTree = "<group>"; };
 		8399A80D23D9F8AE00AAE5B6 /* open_sans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = open_sans.ttf; sourceTree = "<group>"; };
-		839A7CCC24068681001A26FD /* YeniAnaSayfa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeniAnaSayfa.swift; sourceTree = "<group>"; };
+		839A7CCC24068681001A26FD /* YeniAnaSayfa.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = YeniAnaSayfa.swift; path = ../YeniAnaSayfa.swift; sourceTree = "<group>"; };
 		839E0CDE23D9F728002C4159 /* Trade Gothic LT Bold Condensed No. 20.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Trade Gothic LT Bold Condensed No. 20.ttf"; sourceTree = "<group>"; };
-		839E6E2B2405A40100049608 /* PİCKERVİEWDENEME.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PİCKERVİEWDENEME.swift"; sourceTree = "<group>"; };
+		839E6E2B2405A40100049608 /* PİCKERVİEWDENEME.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PİCKERVİEWDENEME.swift"; path = "../PİCKERVİEWDENEME.swift"; sourceTree = "<group>"; };
+		83A777F82416A41C00EBBB0E /* Q_Wastage_Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Q_Wastage_Result.swift; sourceTree = "<group>"; };
+		83CAD7E524158F78001E0436 /* ForgotPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassword.swift; sourceTree = "<group>"; };
 		83F0DCE123D8AB52008BD7A9 /* GifPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifPlayer.swift; sourceTree = "<group>"; };
 		83F0DCE323D8AC94008BD7A9 /* loa_gif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loa_gif.gif; sourceTree = "<group>"; };
 		83F0DCE523D8AD73008BD7A9 /* LaunchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchViewController.swift; sourceTree = "<group>"; };
 		83F0DCE723D8BF6D008BD7A9 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		83F2CFA123EC790E0073DAFC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		83F2CFA123EC790E0073DAFC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "../Launch Screen.storyboard"; sourceTree = "<group>"; };
 		83F4635D23F58BA100589D70 /* Calculate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculate.swift; sourceTree = "<group>"; };
 		83F4635F23F59A7300589D70 /* IntroSliderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroSliderViewController.swift; sourceTree = "<group>"; };
 		83F4636123F59B8800589D70 /* SwipingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipingController.swift; sourceTree = "<group>"; };
@@ -168,12 +190,6 @@
 		085B0E85208073E500AF5F8A = {
 			isa = PBXGroup;
 			children = (
-				839A7CCC24068681001A26FD /* YeniAnaSayfa.swift */,
-				839E6E2B2405A40100049608 /* PİCKERVİEWDENEME.swift */,
-				8364989F23F83EE80007133D /* Intro4ViewController.swift */,
-				8364989D23F83ED30007133D /* Intro3ViewController.swift */,
-				8364989B23F83DD50007133D /* Intro2ViewController.swift */,
-				83F2CFA123EC790E0073DAFC /* Launch Screen.storyboard */,
 				839E0CDD23D9F6E8002C4159 /* Fonts */,
 				085B0E90208073E500AF5F8A /* OnboardingExample */,
 				085B0EA5208073EC00AF5F8A /* OnboardingExampleTests */,
@@ -201,19 +217,36 @@
 				085B0EC42080801A00AF5F8A /* fonts */,
 				085B0EBF20807C0C00AF5F8A /* views */,
 				085B0E91208073E500AF5F8A /* AppDelegate.swift */,
+				83426A94241EE09000562758 /* Result_Loading_Wastage.swift */,
+				83426A96241F9ABA00562758 /* Result_Loading_Injections.swift */,
+				83CAD7E524158F78001E0436 /* ForgotPassword.swift */,
+				833448B82415B3F6004E2BCD /* InformationVC.swift */,
 				83F4636123F59B8800589D70 /* SwipingController.swift */,
 				83F4636323F59BC800589D70 /* PageCell.swift */,
 				83F4636523F59BFA00589D70 /* Page.swift */,
 				8325C08923E859A800A5F554 /* Intro.swift */,
 				830107E523F83705003A0271 /* kilo_gif.gif */,
+				839A7CCC24068681001A26FD /* YeniAnaSayfa.swift */,
+				839E6E2B2405A40100049608 /* PİCKERVİEWDENEME.swift */,
+				8364989F23F83EE80007133D /* Intro4ViewController.swift */,
+				8364989D23F83ED30007133D /* Intro3ViewController.swift */,
+				8364989B23F83DD50007133D /* Intro2ViewController.swift */,
+				83F2CFA123EC790E0073DAFC /* Launch Screen.storyboard */,
+				83426AA424213A2A00562758 /* adm_video.mp4 */,
 				830107E423F83705003A0271 /* secim_kriter_gif.gif */,
 				830107E623F83705003A0271 /* sonuc_gif.gif */,
 				830107E823F83705003A0271 /* tedavi_asamasi_gif.gif */,
-				836B972823E86D4C0030F11F /* roche_video.mp4 */,
 				830BCB1B23C8CEAA00C43F8F /* ResultPage.swift */,
 				085B0E93208073E500AF5F8A /* OnboardingController.swift */,
 				83F0DCE523D8AD73008BD7A9 /* LaunchViewController.swift */,
 				085B0E95208073E500AF5F8A /* Main.storyboard */,
+				83426AA224211B3300562758 /* Result_Injections_3.swift */,
+				83426AA024211AEB00562758 /* Result_Injections_2.swift */,
+				83426A9E2421193A00562758 /* Result_Injections_1.swift */,
+				83426A9C241FA8E900562758 /* Result_Wastage_3.swift */,
+				83426A9A241FA3D700562758 /* Result_Wastage_2.swift */,
+				83426A98241F9D1A00562758 /* Result_Wastage_1.swift */,
+				83A777F82416A41C00EBBB0E /* Q_Wastage_Result.swift */,
 				8373EF7D23F86A0A001E81AE /* PopUpViewController.swift */,
 				830107DE23F82284003A0271 /* Intro1.swift */,
 				83F4635F23F59A7300589D70 /* IntroSliderViewController.swift */,
@@ -314,6 +347,7 @@
 				085B0E8A208073E500AF5F8A /* Sources */,
 				085B0E8B208073E500AF5F8A /* Frameworks */,
 				085B0E8C208073E500AF5F8A /* Resources */,
+				E9A58C3D9683375DC7D8E1DD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -351,6 +385,7 @@
 				085B0EA9208073EC00AF5F8A /* Sources */,
 				085B0EAA208073EC00AF5F8A /* Frameworks */,
 				085B0EAB208073EC00AF5F8A /* Resources */,
+				159C37B04DA6B23C460556B9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -410,13 +445,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83426AA52421520A00562758 /* adm_video.mp4 in Resources */,
 				830107ED23F83705003A0271 /* sonuc_gif.gif in Resources */,
 				8399A80F23D9F8AE00AAE5B6 /* open_sans_bold.ttf in Resources */,
 				839E0CDF23D9F729002C4159 /* Trade Gothic LT Bold Condensed No. 20.ttf in Resources */,
 				8399A80E23D9F8AE00AAE5B6 /* open_sans_semibold.ttf in Resources */,
 				83F0DCE423D8AC94008BD7A9 /* loa_gif.gif in Resources */,
 				830107EC23F83705003A0271 /* kilo_gif.gif in Resources */,
-				836B972923E86D4C0030F11F /* roche_video.mp4 in Resources */,
 				085B0ECC2080804D00AF5F8A /* montserrat_light.otf in Resources */,
 				830107EB23F83705003A0271 /* secim_kriter_gif.gif in Resources */,
 				83F2CFA223EC79170073DAFC /* Launch Screen.storyboard in Resources */,
@@ -448,6 +483,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		159C37B04DA6B23C460556B9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OnboardingExample-OnboardingExampleUITests/Pods-OnboardingExample-OnboardingExampleUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OnboardingExample-OnboardingExampleUITests/Pods-OnboardingExample-OnboardingExampleUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-OnboardingExample-OnboardingExampleUITests/Pods-OnboardingExample-OnboardingExampleUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		54E74A04F25E28DFB98F4C17 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -514,6 +566,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E9A58C3D9683375DC7D8E1DD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OnboardingExample/Pods-OnboardingExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OnboardingExample/Pods-OnboardingExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-OnboardingExample/Pods-OnboardingExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -524,26 +593,37 @@
 				8325C08A23E859A800A5F554 /* Intro.swift in Sources */,
 				83F0DCE823D8BF6D008BD7A9 /* LoginViewController.swift in Sources */,
 				836127AC23F48687000BD131 /* PickerDeneme.swift in Sources */,
+				83426AA124211AEB00562758 /* Result_Injections_2.swift in Sources */,
 				8313CC9123EA087C00505DD4 /* SplashViewController.swift in Sources */,
 				830BCB1C23C8CEAA00C43F8F /* ResultPage.swift in Sources */,
+				83426A9D241FA8E900562758 /* Result_Wastage_3.swift in Sources */,
+				83426A97241F9ABA00562758 /* Result_Loading_Injections.swift in Sources */,
+				83426A99241F9D1A00562758 /* Result_Wastage_1.swift in Sources */,
 				83F4636023F59A7300589D70 /* IntroSliderViewController.swift in Sources */,
 				8364989C23F83DD50007133D /* Intro2ViewController.swift in Sources */,
 				83F4636423F59BC800589D70 /* PageCell.swift in Sources */,
 				830107DF23F82284003A0271 /* Intro1.swift in Sources */,
+				83426A9F2421193A00562758 /* Result_Injections_1.swift in Sources */,
 				085B0EC320807C9600AF5F8A /* Slide.swift in Sources */,
+				83426A9B241FA3D700562758 /* Result_Wastage_2.swift in Sources */,
+				83426A95241EE09100562758 /* Result_Loading_Wastage.swift in Sources */,
 				83F4636223F59B8800589D70 /* SwipingController.swift in Sources */,
 				839A7CCD24068681001A26FD /* YeniAnaSayfa.swift in Sources */,
 				8337785423C77AC700E77162 /* AnaSayfa.swift in Sources */,
 				836B972723E86C430030F11F /* VideoViewController.swift in Sources */,
 				8364989E23F83ED30007133D /* Intro3ViewController.swift in Sources */,
+				83A777F92416A41C00EBBB0E /* Q_Wastage_Result.swift in Sources */,
 				83F4635E23F58BA100589D70 /* Calculate.swift in Sources */,
 				085B0E94208073E500AF5F8A /* OnboardingController.swift in Sources */,
 				839E6E2C2405A40100049608 /* PİCKERVİEWDENEME.swift in Sources */,
+				83426AA324211B3300562758 /* Result_Injections_3.swift in Sources */,
 				085B0E92208073E500AF5F8A /* AppDelegate.swift in Sources */,
 				83F4636623F59BFA00589D70 /* Page.swift in Sources */,
 				83F0DCE223D8AB52008BD7A9 /* GifPlayer.swift in Sources */,
 				8373EF7E23F86A0A001E81AE /* PopUpViewController.swift in Sources */,
+				833448B92415B3F6004E2BCD /* InformationVC.swift in Sources */,
 				8381CE1323EB34AD007B7B40 /* CheckInternet.swift in Sources */,
+				83CAD7E624158F78001E0436 /* ForgotPassword.swift in Sources */,
 				836498A023F83EE80007133D /* Intro4ViewController.swift in Sources */,
 				83F0DCE623D8AD73008BD7A9 /* LaunchViewController.swift in Sources */,
 			);

@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import Parse
 
 
 
 class SplashViewController: UIViewController  {
 
-    
+    var splash_bool = false
 
     @IBOutlet weak var image_gif: UIImageView!
     override func viewDidLoad() {
@@ -22,14 +23,51 @@ class SplashViewController: UIViewController  {
         
       
         
+        
         let seconds = 2.0
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds){
+        
+            let defaults = UserDefaults.standard
             
             
             
             if CheckInternet.Connection(){
                 
-                self.performSegue (withIdentifier: "splashden_introya", sender: self)
+                self.splash_bool = defaults.bool(forKey: "splash_bool")
+                
+                if self.splash_bool == true{
+                    
+                    
+                    let user = PFUser.current()
+                    if user == nil
+                    {
+                        
+                         self.performSegue (withIdentifier: "splashden_logine", sender: self)
+                    }
+                    else
+                    {
+                        self.performSegue(withIdentifier: "splash_ana", sender: nil)
+                        
+                    }
+                    
+                    
+                   
+
+                    
+                }else{
+                    
+                    
+                    self.performSegue (withIdentifier: "splashden_introya", sender: self)
+                    defaults.set(true, forKey: "splash_bool")
+
+                    
+
+
+                }
+
+               
+                
+               
                 
             }
                 
