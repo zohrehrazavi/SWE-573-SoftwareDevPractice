@@ -123,13 +123,22 @@ class YeniAnaSayfa: UIViewController,UIPickerViewDelegate, UIPickerViewDataSourc
 
       
         
-
+        let ekran_genişliği = view.frame.width
+        let ekran_yüksekliği = view.frame.height
+        
+        print(ekran_genişliği, ekran_yüksekliği)
+        
+       
+        
         
       
         
         let frm: CGRect = bizim_view.frame
         let bizim_view_dikey_konum = frm.origin.y
+        let bizim_view_yatay_konum = frm.origin.x
+
         let bizim_view_yükseklik = frm.size.height
+        
         
         bizim_view.frame = frm
         let frm_2: CGRect = pickerView.frame
@@ -158,6 +167,19 @@ class YeniAnaSayfa: UIViewController,UIPickerViewDelegate, UIPickerViewDataSourc
             
             
         }
+        
+        
+      /*
+         iPhone XS Max
+         
+         if ((ekran_genişliği == 414.0 ) && (ekran_yüksekliği == 896.0 )){
+            
+            bizim_view.frame = CGRect(x: bizim_view_yatay_konum , y:  bizim_view_dikey_konum  , width: view.frame.width   , height: 200 )
+            
+            
+        }
+ 
+ */
 
      
         

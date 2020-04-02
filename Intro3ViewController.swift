@@ -10,12 +10,29 @@ import UIKit
 
 class Intro3ViewController: UIViewController {
 
-   
+    @IBOutlet weak var text_1: UILabel!
+    
+    @IBOutlet weak var text_2: UITextView!
     @IBOutlet weak var gif_image_view: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
 
          gif_image_view.loadGif(name: "secim_kriter_gif")
+        
+        
+        let ekran_genişliği = view.frame.width
+        let ekran_yüksekliği = view.frame.height
+        
+        
+        
+        if ((ekran_genişliği == 320.0) && (ekran_yüksekliği == 568.0)){
+            
+            
+            text_1.font = UIFont(name: "TradeGothicLT-BoldCondTwenty", size: 37)
+            text_2.font = UIFont(name: "OpenSans", size: 19)
+            
+        }
+        
     }
     
     @IBAction func panPerformed(_ sender: UIPanGestureRecognizer) {

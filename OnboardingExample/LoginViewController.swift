@@ -11,6 +11,8 @@ import  Parse
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var pass_word_case: UIButton!
+    @IBOutlet weak var welcome_text: UILabel!
     @IBOutlet weak var goz_image_view: UIImageView!
     @IBOutlet weak var kilt_icon: UIImageView!
     @IBOutlet weak var mail_icon: UIImageView!
@@ -33,6 +35,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
+        
+        
+        let ekran_genişliği = view.frame.width
+        let ekran_yüksekliği = view.frame.height
+        
+        
+        
+        if ((ekran_genişliği == 320.0) && (ekran_yüksekliği == 568.0)){
+            
+            
+            welcome_text.font = UIFont(name: "TradeGothicLT-BoldCondTwenty", size: 34)
+            pass_word_case.titleLabel?.font =  UIFont(name: "OpenSans-SemiBold", size: 9)
+
+            
+        }
+        
         
         view.addSubview(activityIndicator)
         

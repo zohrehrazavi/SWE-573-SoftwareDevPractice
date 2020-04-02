@@ -11,6 +11,8 @@ import UIKit
 class Intro1: UIViewController  {
 
    
+    @IBOutlet weak var text_2: UITextView!
+    @IBOutlet weak var text_1: UILabel!
     @IBOutlet weak var gif_image_view: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,11 +21,21 @@ class Intro1: UIViewController  {
         
        
         
-       /* let ekran_genişliği = view.frame.width
+        let ekran_genişliği = view.frame.width
+        let ekran_yüksekliği = view.frame.height
+
         
-        imageView.frame = CGRect(x: 100, y: 202, width: 100, height: 1000 * 0.3)
+        
+        if ((ekran_genişliği == 320.0) && (ekran_yüksekliği == 568.0)){
+            
+            
+            text_1.font = UIFont(name: "TradeGothicLT-BoldCondTwenty", size: 40)
+            text_2.font = UIFont(name: "OpenSans", size: 22)
+
+        }
+        
  
- */
+ 
 
 
 

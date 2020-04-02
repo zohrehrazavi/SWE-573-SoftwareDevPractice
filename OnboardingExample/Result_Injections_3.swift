@@ -681,6 +681,22 @@ class Result_Injections_3: UIViewController, UIGestureRecognizerDelegate {
         alt_layout.addSubview(vial_comb_label)
         
         
+        let ekran_genişliği = view.frame.width
+        let ekran_yüksekliği = view.frame.height
+        
+        
+        
+        if ((ekran_genişliği == 320.0) && (ekran_yüksekliği == 568.0)){
+            
+            
+            example_label.font = UIFont(name: "TradeGothicLT-BoldCondTwenty", size: 40)
+            vial_comb_label.font = UIFont(name: "TradeGothicLT-BoldCondTwenty", size: 40)
+            
+            
+        }
+        
+        
+        
         let total_dose_baslık = UILabel(frame: CGRect(x: 10, y: 120, width: ekran_boyutu.width / 2, height: 60 ))
         total_dose_baslık.textAlignment = .left
         total_dose_baslık.font = UIFont(name: "OpenSans-Bold", size: 17)
