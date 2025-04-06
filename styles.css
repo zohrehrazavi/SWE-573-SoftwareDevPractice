@@ -1,0 +1,158 @@
+body {
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+}
+
+.search-dropdown.active {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+#board {
+    width: 100%;
+    height: 600px;
+    border: 2px solid #ccc;
+    position: relative;
+    background: #f5f5f5;
+}
+
+.node {
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 50%;
+    position: absolute;
+    cursor: move;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.node-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    word-wrap: break-word;
+    max-width: 100px;
+    margin-top: 5px;
+}
+
+.node-number {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.edge-container {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.edge {
+    position: absolute;
+    height: 2px;
+    background-color: #333;
+    transform-origin: left center;
+    width: 100%;
+}
+
+.edge-label {
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    transform: translateX(-50%);
+    background: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    text-align: center;
+    border: 1px solid #ccc;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.node-icons {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+}
+
+.node-icon {
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.delete-icon {
+    color: red;
+}
+
+.edge-icon {
+    color: blue;
+}
+
+.remove-edge-icon {
+    color: #ff4400;
+}
+
+.node-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
