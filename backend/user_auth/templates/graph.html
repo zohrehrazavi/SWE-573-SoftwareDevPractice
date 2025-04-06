@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graph Preview</title>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <style>
+        #cy {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h2>Graph Preview</h2>
+    <div id="cy"></div>
+
+    <script>
+    const boardId = {{ board_id }};
+    let selectedNode = null;
+
+    fetch(`/api/board/${boardId}/graph/`)
+        .then(response => response.json())
+        .then(data => {
+            const elements = [];
+
+            // Add nodes
+            data.nodes.forEach(node => {
+                elements.push({
+                    data: {
+                        id: node.id,
+                        label: node.label || node.id,
+                        type: node.type || "property"
+                    }
+                });
+            });
+
+            // Add edges
+            data.edges.forEach(edge => {
+                elements.push({
+                    data: {
+                        id: `edge-${edge.from}-${edge.to}`,
+                        source: edge.from,
+                        target: edge.to
+                    }
+                });
+            });
+
+            // Initialize cytoscape
+            const cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    {
+                        selector: 'node[type = "main"]',
+                        style: {
+                            'background-color': '#0074D9',
+                            'label': 'data(label)',
+                            'color': '#fff',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'text-wrap': 'wrap',
+                            'text-max-width': '60px',
+                            'text-overflow-wrap': 'anywhere',
+                            'font-size': '16px',
+                            'width': 60,
+                            'height': 60,
+                            'shape': 'ellipse',
+                            'padding': '5px'
+                        }
+                    },
+                    {
+                        selector: 'node[type = "property"]',
+                        style: {
+                            'background-color': '#7FDBFF',
+                            'label': 'data(label)',
+                            'color': '#000',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'text-wrap': 'wrap',
+                            'text-max-width': '40px',
+                            'text-overflow-wrap': 'anywhere',
+                            'font-size': '12px',
+                            'width': 30,
+                            'height': 30,
+                            'shape': 'ellipse',
+                            'padding': '4px'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2,
+                            'line-color': '#ccc'
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'cose'
+                }
+            });
+
+            // node selection logic
+            cy.on('tap', 'node', function (evt) {
+                const node = evt.target;
+
+                if (!selectedNode) {
+                    selectedNode = node;
+                    node.style('border-color', 'red');
+                    node.style('border-width', 4);
+                } else {
+                    if (selectedNode.id() !== node.id()) {
+                        const edgeId = `edge-${selectedNode.id()}-${node.id()}`;
+                        cy.add({
+                            group: "edges",
+                            data: {
+                                id: edgeId,
+                                source: selectedNode.id(),
+                                target: node.id()
+                            }
+                        });
+
+                        fetch("/api/edge/add/", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: `from=${selectedNode.id()}&to=${node.id()}&board=${boardId}`
+                        });
+
+                        selectedNode.style('border-color', '#000');
+                        selectedNode.style('border-width', 0);
+                        selectedNode = null;
+                    }
+                }
+            });
+
+            cy.on('tap', function (event) {
+                if (event.target === cy) {
+                    if (selectedNode) {
+                        selectedNode.style('border-color', '#000');
+                        selectedNode.style('border-width', 0);
+                        selectedNode = null;
+                    }
+                }
+            });
+
+            cy.on('tap', 'edge', function (evt) {
+                const edge = evt.target;
+                const source = edge.data('source');
+                const target = edge.data('target');
+
+                if (confirm("Delete this connection?")) {
+                    edge.remove();
+                    fetch("/api/edge/delete/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `from=${source}&to=${target}&board=${boardId}`
+                    });
+                }
+            });
+
+        })
+        .catch(error => {
+            console.error("Error loading graph data:", error);
+        });
+    </script>
+</body>
+</html>
