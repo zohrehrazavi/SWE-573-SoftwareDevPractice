@@ -1,39 +1,76 @@
-# **SWE573-SoftwareDevPractice**  
+# SWE573-SoftwareDevPractice
 
-**A repository for managing software development assignments and project requirements for SWE573.**  
-
----
-
-## Project Overview  
-This repository is used to document and track progress on **software requirements gathering**, **project planning**, and **collaboration tasks**. It serves as a central place for organizing issues, documentation, and research.
+A Django-based knowledge-mapping platform created for SWE573. The system allows users to create nodes (representing people, topics, or any entities), enrich them with structured data (e.g., from Wikidata), and visualize their relationships on a graph. Each user can create boards, add multiple nodes, and manually or automatically enrich them with properties.
 
 ---
 
-## Repository Structure  
-- 📂 **Wiki** – Contains documentation and research notes  
-- 📂 **Issues** – Tracks project tasks and assignments  
-- 📂 **Labels** – Used to categorize and organize issues  
-- 📂 **Milestones** – Tracks project progress across different stages
+## Project Overview
+
+This repository is used to manage the software development workflow including requirements gathering, planning, implementation, and research. It serves as a central space for organizing tasks, documentation, and code for the project.
 
 ---
 
-## Dev URLs (Localhost Testing)
+## How to Run the Project
 
-- Django app: http://localhost:8001/
-- Admin panel: http://localhost:8001/admin/
-- Login: http://localhost:8001/auth/login/
-- Graph: http://localhost:8001/graph_preview/<board_id>/
+Follow these steps to run the project on a new computer:
+
+### 1. Install Docker
+
+Download and install Docker Desktop:  
+https://www.docker.com/products/docker-desktop
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/zohrehrazavi/SWE-573-SoftwareDevPractice.git
+cd SWE-573-SoftwareDevPractice
+```
+
+### 3. Build and Start the App
+
+```bash
+docker compose up --build
+```
+
+This will build the containers and start the web and database services.
+
+### 4. Run Migrations
+
+In a new terminal tab:
+
+```bash
+docker compose exec web python manage.py migrate
+```
+
+This creates the necessary database tables (such as auth_user).
+
+### 5. Create Superuser (Optional)
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+Use this to create an admin account to access Django's admin panel.
+
+> Note: All backend commands are run from the web service container.
 
 ---
 
-## Current Focus
+## Development URLs
 
-### 🔹 Week 1: Infrastructure Setup
-- [x] Set up the repository and issue tracking  
-- [x] Organize research documentation using the Wiki  
-- [x] Define GitHub labels and workflows  
+```
+Main App:       http://localhost:8001/
+Admin Panel:    http://localhost:8001/admin/
+Login Page:     http://localhost:8001/auth/login/
+Graph View:     http://localhost:8001/graph_preview/<board_id>/
+```
 
-### 🔹 Week 2: Requirements Gathering
-- [ ] Identify key **elicitation questions**  
-- [ ] Write the **first draft** of software requirements  
-- [ ] Develop **user stories, mockups, and scenarios**
+---
+
+## Repository Structure
+
+- backend/ – Django project files and apps (nodes, user_auth)
+- docker/ – Docker configurations
+- docker-compose.yml – Docker service definitions
+- requirements.txt – Python dependencies
+- README.md – Project documentation
