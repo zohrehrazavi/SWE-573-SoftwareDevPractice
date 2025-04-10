@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse
-from user_auth.forms import BoardForm, NodeForm, CustomUserCreationForm, ManualPropertyForm
-from nodes.models import Board, Node
+from backend.user_auth.forms import BoardForm, NodeForm, CustomUserCreationForm, ManualPropertyForm
+from backend.nodes.models import Board, Node
 from unittest.mock import patch
 
 class AddManualPropertyViewTestCase(TestCase):

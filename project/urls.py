@@ -14,26 +14,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
-from user_auth.views import home_view
-from user_auth.views import register
 from django.contrib import admin
-from django.urls import path
-from user_auth.views import create_board
-from user_auth.views import board_detail
-from user_auth.views import create_node
-from user_auth.views import node_detail, fetch_node_properties
-from user_auth.views import add_manual_property
-from user_auth.views import review_node_properties, approve_node_properties
-from user_auth.views import delete_node
+from backend.user_auth.views import (
+    home_view, register, create_board, board_detail,
+    create_node, node_detail, fetch_node_properties,
+    add_manual_property, review_node_properties, approve_node_properties,
+    delete_node, custom_logout
+)
+from django.contrib.auth import views as auth_views
+from django.shortcuts import redirect
+
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("nodes.urls")),
+    path("api/", include("backend.nodes.urls")),
     path("auth/register/", register, name="register"),
-    path("auth/", include("django.contrib.auth.urls")),
     path("home/", home_view, name="home"),
+    path("auth/login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
+    path("auth/logout/", custom_logout, name="logout"),
     path("board/create/", create_board, name="create_board"),
     path("board/<int:board_id>/", board_detail, name="board_detail"),
     path('board/<int:board_id>/node/create/', create_node, name='create_node'),
@@ -42,9 +42,8 @@ urlpatterns = [
     path('node/<int:node_id>/add_property/', add_manual_property, name='add_manual_property'),
     path("node/<int:node_id>/review_properties/", review_node_properties, name="review_node_properties"),
     path("node/<int:node_id>/approve_properties/", approve_node_properties, name="approve_node_properties"),
-    path('', include('nodes.urls')),
+    path('', include('backend.nodes.urls')),
     path("node/<int:node_id>/delete/", delete_node, name="delete_node"),
-
-
-
+    path('', lambda request: redirect('home'), name='root'),
 ]
+

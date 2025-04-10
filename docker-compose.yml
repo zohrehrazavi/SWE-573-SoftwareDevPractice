@@ -12,13 +12,13 @@ services:
     ports:
       - "5433:5432"
 
-  web:
+  web:  
     build:
       context: .
       dockerfile: docker/Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./backend:/app
+      - .:/app    
     ports:
       - "8001:8000"
     depends_on:

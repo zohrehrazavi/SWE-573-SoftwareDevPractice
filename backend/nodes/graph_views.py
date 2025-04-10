@@ -3,7 +3,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from nodes.models import Board, Node
+from backend.nodes.models import Board, Node
 from collections import defaultdict
 
 class BoardGraphAPIView(APIView):

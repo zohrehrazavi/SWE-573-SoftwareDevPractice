@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from rest_framework import status
-from nodes.models import Node
+from backend.nodes.models import Node
 
 # MODEL TESTS
 class NodeModelTestCase(TestCase):

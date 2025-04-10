@@ -1,15 +1,20 @@
 # user_auth/views.py
 from .forms import CustomUserCreationForm
 from .forms import BoardForm
-from nodes.models import Board, Node
+from backend.nodes.models import Board, Node
 from .forms import NodeForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
-from nodes.models import Node
+from backend.nodes.models import Node
 from .utils import fetch_wikidata_properties_by_name
 from django.contrib import messages
 from .forms import ManualPropertyForm
 from .utils import map_properties_to_form_initial, FORM_LABEL_TO_PROPERTY_LABEL
+from django.contrib.auth import logout
+
+def custom_logout_view(request):
+    logout(request)
+    return render(request, "registration/logged_out.html")
 
 
 
@@ -18,7 +23,6 @@ def delete_node(request, node_id):
     board_id = node.board.id
     node.delete()
     return redirect('board_detail', board_id=board_id)
-
 
 
 @login_required
@@ -154,3 +158,8 @@ def add_manual_property(request, node_id):
         "node": node,
         "edited_field": edited_field  # Pass to template
     })
+
+@login_required
+def custom_logout(request):
+    logout(request)
+    return render(request, 'registration/logout.html')

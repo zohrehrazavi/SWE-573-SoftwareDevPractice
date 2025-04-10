@@ -2,8 +2,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from nodes.models import Board
-from nodes.models import Node
+from backend.nodes.models import Board
+from backend.nodes.models import Node
 
 class NodeForm(forms.ModelForm):
     class Meta:
