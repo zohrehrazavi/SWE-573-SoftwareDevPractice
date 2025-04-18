@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+<html>
+<head>
+    <title>Edit Properties for Node: {{ node.name }}</title>
+    <style>
+        .property-group {
+            margin-bottom: 10px;
+        }
+        .existing {
+            display: flex;
+            align-items: center;
+        }
+        .existing span {
+            margin-right: 10px;
+        }
+        .edit-icon, .delete-icon {
+            margin-left: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .edit-icon { color: green; }
+        .delete-icon { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Edit Properties for Node: {{ node.name }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+    <div class="property-group">
+        {% with raw_label=field.label|strip_label %}
+            {% if node.properties and raw_label in node.properties and raw_label != edited_field %}
+                <div class="existing">
+                    <strong>{{ raw_label }}:</strong>
+                    <span>{{ node.properties|get_item:raw_label }}</span>
+                    <a href="?delete={{ raw_label }}" class="delete-icon" onclick="return confirm('Delete {{ raw_label }}?')">❌</a>
+                    <a href="?edit={{ raw_label }}" class="edit-icon">✏️</a>
+                </div>
+            {% else %}
+                {{ field.label_tag }} {{ field }}
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endfor %}
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <p><a href="{% url 'node_detail' node.id %}">← Back to Node Detail</a></p>
+</body>
+</html>

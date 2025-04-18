@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Connect the Dots{% endblock %}</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 2em;
+      }
+      .property-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .btn-group {
+        margin-top: 10px;
+      }
+      .btn {
+        margin-right: 5px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn-approve {
+        background-color: #b2f2bb;
+        border: 1px solid #2f9e44;
+      }
+      .btn-edit {
+        background-color: #d0ebff;
+        border: 1px solid #1c7ed6;
+      }
+      .btn-remove {
+        background-color: #ffc9c9;
+        border: 1px solid #f03e3e;
+      }
+    </style>
+  </head>
+  <body>
+    {% block content %}
+    <!-- content will be inserted here -->
+    {% endblock %}
+  </body>
+</html>

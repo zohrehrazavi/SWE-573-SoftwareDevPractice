@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Graph Preview</title>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      #cy {
+        width: 100%;
+        height: calc(100vh - 120px);
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        max-height: 70vh;
+        overflow-y: auto;
+        border-radius: 4px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover {
+        color: black;
+      }
+      .property-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      .property-item {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+      }
+      .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #0074d9;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      .back-button:hover {
+        background-color: #0056a4;
+      }
+      h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="{% url 'board_detail' board_id %}" class="back-button">
+      ← Back to Board
+    </a>
+    <h2>Graph Preview</h2>
+    <div id="cy"></div>
+
+    <!-- Node Details Modal -->
+    <div id="nodeModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="nodeName"></h2>
+        <div id="nodeProperties" class="property-list"></div>
+      </div>
+    </div>
+
+    <script>
+      const boardId = '{{ board_id }}'
+      const csrfToken = '{{ csrf_token }}'
+      let selectedNode = null
+      const modal = document.getElementById('nodeModal')
+      const closeBtn = document.getElementsByClassName('close')[0]
+
+      // Close modal when clicking the X
+      closeBtn.onclick = function () {
+        modal.style.display = 'none'
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = 'none'
+        }
+      }
+
+      fetch(`/api/board/${boardId}/graph/`, {
+        headers: {
+          'X-CSRFToken': csrfToken,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // This is important for sending cookies
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          return response.json()
+        })
+        .then((data) => {
+          const elements = []
+
+          // Add nodes
+          data.nodes.forEach((node) => {
+            elements.push({
+              data: {
+                id: node.id,
+                label: node.name,
+                type: node.type,
+                properties: node.properties,
+              },
+            })
+          })
+
+          // Add edges
+          data.edges.forEach((edge) => {
+            elements.push({
+              data: {
+                id: `edge-${edge.from}-${edge.to}`,
+                source: edge.from,
+                target: edge.to,
+              },
+            })
+          })
+
+          // Initialize cytoscape
+          const cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: elements,
+            style: [
+              {
+                selector: 'node[type = "main"]',
+                style: {
+                  'background-color': '#0074D9',
+                  label: 'data(label)',
+                  color: '#fff',
+                  'text-valign': 'center',
+                  'text-halign': 'center',
+                  'text-wrap': 'wrap',
+                  'text-max-width': '60px',
+                  'text-overflow-wrap': 'anywhere',
+                  'font-size': '16px',
+                  width: 60,
+                  height: 60,
+                  shape: 'ellipse',
+                  padding: '5px',
+                },
+              },
+              {
+                selector: 'edge',
+                style: {
+                  width: 2,
+                  'line-color': '#ccc',
+                  'curve-style': 'bezier',
+                },
+              },
+            ],
+            layout: {
+              name: 'cose',
+              animate: false,
+              randomize: true,
+              componentSpacing: 100,
+              nodeRepulsion: function (node) {
+                return 10000
+              },
+            },
+          })
+
+          // Show node details on click
+          cy.on('tap', 'node', function (evt) {
+            const node = evt.target
+            const nodeData = node.data()
+
+            if (!selectedNode) {
+              selectedNode = node
+              node.style('border-color', 'red')
+              node.style('border-width', 4)
+            } else {
+              if (selectedNode.id() !== node.id()) {
+                const edgeId = `edge-${selectedNode.id()}-${node.id()}`
+                cy.add({
+                  group: 'edges',
+                  data: {
+                    id: edgeId,
+                    source: selectedNode.id(),
+                    target: node.id(),
+                  },
+                })
+
+                fetch('/api/edge/add/', {
+                  method: 'POST',
+                  headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: `from=${selectedNode.id()}&to=${node.id()}&board=${boardId}`,
+                  credentials: 'include',
+                })
+
+                selectedNode.style('border-color', '#000')
+                selectedNode.style('border-width', 0)
+                selectedNode = null
+              }
+            }
+
+            // Show node details in modal
+            document.getElementById('nodeName').textContent = nodeData.label
+            const propertiesDiv = document.getElementById('nodeProperties')
+            propertiesDiv.innerHTML = ''
+
+            if (
+              nodeData.properties &&
+              Object.keys(nodeData.properties).length > 0
+            ) {
+              for (const [key, value] of Object.entries(nodeData.properties)) {
+                const propertyItem = document.createElement('div')
+                propertyItem.className = 'property-item'
+                propertyItem.innerHTML = `<strong>${key}:</strong> ${value}`
+                propertiesDiv.appendChild(propertyItem)
+              }
+            } else {
+              propertiesDiv.innerHTML = '<p>No properties available.</p>'
+            }
+
+            modal.style.display = 'block'
+          })
+
+          cy.on('tap', function (event) {
+            if (event.target === cy) {
+              if (selectedNode) {
+                selectedNode.style('border-color', '#000')
+                selectedNode.style('border-width', 0)
+                selectedNode = null
+              }
+            }
+          })
+
+          cy.on('tap', 'edge', function (evt) {
+            const edge = evt.target
+            const source = edge.data('source')
+            const target = edge.data('target')
+
+            if (confirm('Delete this connection?')) {
+              edge.remove()
+              fetch('/api/edge/delete/', {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': csrfToken,
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `from=${source}&to=${target}&board=${boardId}`,
+                credentials: 'include',
+              })
+            }
+          })
+        })
+        .catch((error) => {
+          console.error('Error loading graph data:', error)
+        })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Node</title>
+</head>
+<body>
+    <h2>Create Node in "{{ board.name }}"</h2>
+    <form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Create Node</button>
+</form>
+    <a href="{% url 'board_detail' board.id %}">← Back to Board</a>
+</body>
+</html>
