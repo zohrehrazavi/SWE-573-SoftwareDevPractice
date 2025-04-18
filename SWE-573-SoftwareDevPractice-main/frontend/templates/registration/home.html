@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome! You are logged in.</h2>
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+    <h3>Your Boards:</h3>
+    {% if boards %}
+        <ul>
+{% for board in boards %}
+    <li>
+        <a href="{% url 'board_detail' board.id %}">{{ board.name }}</a>
+        (created on {{ board.created_at|date:"F j, Y, g:i a" }})
+    </li>
+{% endfor %}
+</ul>
+    {% else %}
+        <p>You haven’t created any boards yet.</p>
+    {% endif %}
+
+    <p><a href="{% url 'create_board' %}">Create a New Board</a></p>
+</body>
+</html>
