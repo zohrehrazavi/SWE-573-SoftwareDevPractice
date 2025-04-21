@@ -1,0 +1,38 @@
+<!-- node_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Node Detail</title>
+</head>
+<body>
+    <h1>Node: {{ node.name }}</h1>
+
+    {% if node.description %}
+        <p><em>Description:</em> {{ node.description }}</p>
+    {% endif %}
+
+    <h2>Properties:</h2>
+    {% if node.properties %}
+        <ul>
+            {% for key, value in node.properties.items %}
+                <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No properties yet.</p>
+    {% endif %}
+
+    <p><a href="{% url 'fetch_node_properties' node.id %}">+ Fetch Wikidata Properties</a></p>
+    <p><a href="{% url 'add_manual_property' node.id %}">+ Add/Edit Property</a></p>
+    <p><a href="{% url 'board_detail' node.board.id %}">← Back to Board</a></p>
+</body>
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li style="color: crimson;"><strong>{{ message }}</strong></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+<a href="{% url 'delete_node' node.id %}" onclick="return confirm('Are you sure you want to delete this node?');">❌ Delete This Node</a><br>
+
+</html>

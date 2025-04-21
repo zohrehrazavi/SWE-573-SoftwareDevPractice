@@ -1,0 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# VSCode settings
+.vscode/
+
+# PyCharm project settings
+.idea/
+
+# Django-related
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+db.sqlite3
+
+# Django migration caches
+**/migrations/__pycache__/
+**/migrations/*.pyc
+**/migrations/*.py
+!*/migrations/__init__.py  # keep the init file
+
+# PostgreSQL
+*.pgsql
+*.psql
+*.dump
+*.sql
+
+# Docker-related
+.env
+*.pid
+docker-compose.override.yml
+docker-volume-data/
+postgres_data/
+.env.*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Pip and Python packaging
+pip-wheel-metadata/
+*.egg-info/
+dist/
+build/
+
+# Static/media if generated locally
+media/
+staticfiles/
