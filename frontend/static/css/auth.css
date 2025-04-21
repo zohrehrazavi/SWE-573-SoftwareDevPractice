@@ -1,41 +1,75 @@
+/* Base page styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #95c11f;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #95c11f;
-}
-
-.auth-box {
+  }
+  
+  /* Shared container for login and register */
+  .auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  /* Header above form */
+  .auth-header {
+    text-align: center;
+    color: white;
+    max-width: 400px;
+  }
+  
+  .auth-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .auth-header p {
+    margin: 8px 0 0;
+    font-size: 16px;
+  }
+  
+  /* White box containing the form */
+  .auth-box {
     background: white;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
-}
-
-.auth-form {
+  }
+  
+  /* Form layout */
+  .auth-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-.auth-input {
+  }
+  
+  /* Text inputs (login and register) */
+  .auth-form input[type="text"],
+  .auth-form input[type="email"],
+  .auth-form input[type="password"] {
     width: 100%;
     padding: 12px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     font-size: 16px;
     background: #f5f5f5;
-    margin-bottom: 15px;
     box-sizing: border-box;
-}
-
-.auth-button {
+    color: #333;
+  }
+  
+  /* Button */
+  .auth-button {
     width: 100%;
     background: #95c11f;
     color: white;
@@ -43,45 +77,76 @@ body {
     border: none;
     border-radius: 4px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     text-transform: uppercase;
-}
-
-.auth-link {
-    color: #95c11f;
-    text-decoration: none;
-}
-
-.auth-link:hover {
-    text-decoration: underline;
-}
-
-.auth-footer {
+  }
+  
+  .auth-button:hover {
+    background-color: #82aa1a;
+  }
+  
+  /* Link to switch pages */
+  .auth-footer {
     text-align: center;
     margin-top: 20px;
     color: #666;
-} 
-.auth-header {
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-    max-width: 400px;
-    padding: 0 20px;
-}
-
-.auth-header h2 {
+    font-size: 14px;
+  }
+  
+  .auth-link {
+    color: #95c11f;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .auth-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Paragraphs in register form */
+  .auth-form p {
     margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.auth-header p {
-    margin: 8px 0 0;
-    font-size: 16px;
-}
-.auth-container {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* Labels above inputs */
+  .auth-form p > label {
+    display: block;
+    margin-bottom: 6px;
+    color: #666;
+    font-weight: normal;
+    font-size: 14px;
+  }
+  
+  /* Help texts and password rules */
+  .auth-form p small,
+  .auth-form ul {
+    color: #999;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+  
+  /* List styling (password rules) */
+  .auth-form ul {
+    padding-left: 20px;
+    margin: 0;
+  }
+  
+  /* Checkbox styling */
+  .auth-form p:has(input[type="checkbox"]) {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 20px;
-}
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .auth-form input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #95c11f;
+    margin: 0;
+  }
+  

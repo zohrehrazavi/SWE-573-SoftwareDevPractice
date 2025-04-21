@@ -1,16 +1,31 @@
-<!-- registration/register.html -->
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Register</title>
-</head>
-<body>
-    <h2>Register</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
-</body>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-header">
+        <h2>Join Connect the Dots</h2>
+        <p>Create an account to start building and visualizing your research.</p>
+      </div>
+
+      <div class="auth-box">
+        <form method="post" class="auth-form">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="auth-button">Register</button>
+        </form>
+
+        <div class="auth-footer">
+          Already have an account?
+          <a href="{% url 'login' %}" class="auth-link">Login</a>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
