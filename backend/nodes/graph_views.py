@@ -3,7 +3,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from backend.nodes.models import Board, Node, ManualEdge
+from .models import Board, Node, ManualEdge
 
 class BoardGraphAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -32,7 +32,8 @@ class BoardGraphAPIView(APIView):
         for edge in manual_edges:
             edges.append({
                 "from": str(edge.from_node.id),
-                "to": str(edge.to_node.id)
+                "to": str(edge.to_node.id),
+                "label": edge.label
             })
 
         return Response({

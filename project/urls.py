@@ -25,8 +25,6 @@ from backend.user_auth.views import (
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("backend.nodes.urls")),
@@ -42,7 +40,6 @@ urlpatterns = [
     path('node/<int:node_id>/add_property/', add_manual_property, name='add_manual_property'),
     path("node/<int:node_id>/review_properties/", review_node_properties, name="review_node_properties"),
     path("node/<int:node_id>/approve_properties/", approve_node_properties, name="approve_node_properties"),
-    path('', include('backend.nodes.urls')),
     path("node/<int:node_id>/delete/", delete_node, name="delete_node"),
     path('', lambda request: redirect('home'), name='root'),
 ]

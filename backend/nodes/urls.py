@@ -5,8 +5,8 @@ from .views import graph_preview
 
 urlpatterns = [
     path('nodes/', NodeListCreateView.as_view(), name='node-list-create'),
-    path('api/board/<int:board_id>/graph/', BoardGraphAPIView.as_view(), name='board-graph'),
+    path('board/<int:board_id>/graph/', BoardGraphAPIView.as_view(), name='board-graph'),
     path('graph_preview/<int:board_id>/', graph_preview, name='graph-preview'),
-    path("api/edge/add/", save_manual_edge, name="save_manual_edge"),
-    path("api/edge/delete/", delete_manual_edge, name="delete_manual_edge"),
+    path("edge/add/", save_manual_edge, name="save_manual_edge"),
+    path("edge/delete/", delete_manual_edge, name="delete_manual_edge"),
 ]
