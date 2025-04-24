@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Graph Preview</title>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      #cy {
+        width: 100%;
+        height: calc(100vh - 180px);
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+        max-height: 70vh;
+        overflow-y: auto;
+        border-radius: 4px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover {
+        color: black;
+      }
+      .property-list {
+        list-style-type: none;
+        padding: 0;
+      }
+      .property-item {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+      }
+      .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #0074d9;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+      .back-button:hover {
+        background-color: #0056a4;
+      }
+      .mode-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #2ecc40;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-right: 10px;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.2s ease;
+      }
+      .mode-button.active {
+        border-color: #fff;
+        box-shadow: 0 0 0 3px #2ecc40;
+      }
+      .mode-button:hover {
+        opacity: 0.9;
+      }
+      .delete-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #ff851b;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-right: 10px;
+        cursor: not-allowed;
+        border: 3px solid transparent;
+        transition: all 0.2s ease;
+        opacity: 0.5;
+      }
+      .delete-button.active {
+        cursor: pointer;
+        opacity: 1;
+        border-color: #fff;
+        box-shadow: 0 0 0 3px #ff851b;
+      }
+      .delete-button:hover.active {
+        opacity: 0.9;
+      }
+      .controls {
+        margin-bottom: 20px;
+      }
+      h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="{% url 'board_detail' board_id %}" class="back-button">
+      ← Back to Board
+    </a>
+    <h2>Graph Preview</h2>
+
+    <div class="controls">
+      <div class="mode-button" id="viewMode">View Properties</div>
+      <div class="mode-button" id="connectMode">Connect Nodes</div>
+      <div class="delete-button" id="deleteEdge">Delete Connection</div>
+    </div>
+
+    <div id="cy"></div>
+
+    <!-- Node Details Modal -->
+    <div id="nodeModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="nodeName"></h2>
+        <div id="nodeProperties" class="property-list"></div>
+      </div>
+    </div>
+
+    <script>
+      const boardId = '{{ board_id }}'
+      const csrfToken = '{{ csrf_token }}'
+      let selectedNode = null
+      let selectedEdge = null
+      let isConnectMode = false
+      const modal = document.getElementById('nodeModal')
+      const closeBtn = document.getElementsByClassName('close')[0]
+      const viewModeBtn = document.getElementById('viewMode')
+      const connectModeBtn = document.getElementById('connectMode')
+      const deleteEdgeBtn = document.getElementById('deleteEdge')
+
+      function clearSelectedEdge() {
+        if (selectedEdge) {
+          selectedEdge.removeClass('selected')
+          selectedEdge = null
+          deleteEdgeBtn.classList.remove('active')
+        }
+      }
+
+      // Mode switching
+      viewModeBtn.addEventListener('click', () => {
+        isConnectMode = false
+        viewModeBtn.classList.add('active')
+        connectModeBtn.classList.remove('active')
+        selectedNode = null
+        clearSelectedEdge()
+      })
+
+      connectModeBtn.addEventListener('click', () => {
+        isConnectMode = true
+        connectModeBtn.classList.add('active')
+        viewModeBtn.classList.remove('active')
+        selectedNode = null
+        clearSelectedEdge()
+      })
+
+      // Delete edge button click handler
+      deleteEdgeBtn.addEventListener('click', () => {
+        console.log(
+          'Delete button clicked, selectedEdge:',
+          selectedEdge ? selectedEdge.id() : 'none',
+        )
+        if (selectedEdge) {
+          const sourceNode = cy.getElementById(selectedEdge.data('source'))
+          const targetNode = cy.getElementById(selectedEdge.data('target'))
+
+          if (
+            confirm(
+              `Are you sure you want to delete the connection between "${sourceNode.data(
+                'label',
+              )}" and "${targetNode.data('label')}"?`,
+            )
+          ) {
+            console.log(
+              'Sending delete request for edge:',
+              sourceNode.id(),
+              '->',
+              targetNode.id(),
+            )
+            fetch('/api/edge/delete/', {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              credentials: 'include',
+              body: `from=${sourceNode.id()}&to=${targetNode.id()}&board=${boardId}`,
+            })
+              .then((response) => {
+                console.log('Delete response:', response)
+                if (!response.ok) throw new Error('Network response was not ok')
+                return response.json()
+              })
+              .then((data) => {
+                console.log('Delete success:', data)
+                if (data.status === 'deleted') {
+                  selectedEdge.remove()
+                  clearSelectedEdge()
+                } else {
+                  throw new Error(data.message || 'Failed to delete connection')
+                }
+              })
+              .catch((error) => {
+                console.error('Delete error:', error)
+                alert('Failed to delete connection: ' + error.message)
+              })
+          }
+        } else {
+          console.log('No edge selected')
+        }
+      })
+
+      // Close modal when clicking the X
+      closeBtn.onclick = function () {
+        modal.style.display = 'none'
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = 'none'
+        }
+      }
+
+      // Initialize cytoscape and load data
+      fetch(`/api/board/${boardId}/graph/`, {
+        headers: {
+          'X-CSRFToken': csrfToken,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`)
+          return response.json()
+        })
+        .then((data) => {
+          const elements = []
+
+          // Add nodes
+          data.nodes.forEach((node) => {
+            elements.push({
+              data: {
+                id: node.id,
+                label: node.name,
+                type: node.type,
+                properties: node.properties,
+              },
+            })
+          })
+
+          // Add edges
+          data.edges.forEach((edge) => {
+            elements.push({
+              data: {
+                id: `edge-${edge.from}-${edge.to}`,
+                source: edge.from,
+                target: edge.to,
+              },
+            })
+          })
+
+          // Initialize cytoscape
+          const cy = (window.cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: elements,
+            style: [
+              {
+                selector: 'node[type = "main"]',
+                style: {
+                  'background-color': '#0074D9',
+                  label: 'data(label)',
+                  color: '#fff',
+                  'text-valign': 'center',
+                  'text-halign': 'center',
+                  'text-wrap': 'wrap',
+                  'text-max-width': '60px',
+                  'text-overflow-wrap': 'anywhere',
+                  'font-size': '16px',
+                  width: 60,
+                  height: 60,
+                  shape: 'ellipse',
+                  padding: '5px',
+                },
+              },
+              {
+                selector: 'node.selected',
+                style: {
+                  'background-color': '#FF4136',
+                },
+              },
+              {
+                selector: 'edge',
+                style: {
+                  width: 2,
+                  'line-color': '#ccc',
+                  'curve-style': 'bezier',
+                },
+              },
+              {
+                selector: 'edge.selected',
+                style: {
+                  'line-color': '#ff851b',
+                  width: 4,
+                },
+              },
+            ],
+            layout: {
+              name: 'cose',
+              animate: false,
+              randomize: true,
+              componentSpacing: 100,
+              nodeRepulsion: function (node) {
+                return 10000
+              },
+            },
+          }))
+
+          // Node click handler
+          cy.on('tap', 'node', function (evt) {
+            const node = evt.target
+            const nodeData = node.data()
+
+            if (isConnectMode) {
+              if (!selectedNode) {
+                selectedNode = node
+                node.addClass('selected')
+              } else if (selectedNode.id() === node.id()) {
+                selectedNode.removeClass('selected')
+                selectedNode = null
+              } else {
+                const fromId = selectedNode.id()
+                const toId = node.id()
+
+                // Check if connection already exists
+                const existingEdge = cy
+                  .edges()
+                  .filter(
+                    (edge) =>
+                      (edge.data('source') === fromId &&
+                        edge.data('target') === toId) ||
+                      (edge.data('source') === toId &&
+                        edge.data('target') === fromId),
+                  )
+
+                if (existingEdge.length > 0) {
+                  alert('These nodes are already connected!')
+                  selectedNode.removeClass('selected')
+                  selectedNode = null
+                  return
+                }
+
+                fetch('/api/edge/add/', {
+                  method: 'POST',
+                  headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  credentials: 'include',
+                  body: `from=${fromId}&to=${toId}&board=${boardId}`,
+                })
+                  .then((response) => {
+                    if (!response.ok)
+                      throw new Error('Network response was not ok')
+                    return response.json()
+                  })
+                  .then((data) => {
+                    cy.add({
+                      data: {
+                        id: `edge-${fromId}-${toId}`,
+                        source: fromId,
+                        target: toId,
+                      },
+                    })
+                  })
+                  .catch((error) => {
+                    console.error('Error:', error)
+                    alert('Failed to create connection')
+                  })
+
+                selectedNode.removeClass('selected')
+                selectedNode = null
+              }
+            } else {
+              // View properties mode
+              document.getElementById('nodeName').textContent = nodeData.label
+              const propertiesDiv = document.getElementById('nodeProperties')
+              propertiesDiv.innerHTML = ''
+
+              if (nodeData.properties) {
+                Object.entries(nodeData.properties).forEach(([key, value]) => {
+                  const propertyItem = document.createElement('div')
+                  propertyItem.className = 'property-item'
+                  propertyItem.innerHTML = `<strong>${key}:</strong> ${value}`
+                  propertiesDiv.appendChild(propertyItem)
+                })
+              } else {
+                propertiesDiv.innerHTML = '<p>No properties available</p>'
+              }
+
+              modal.style.display = 'block'
+            }
+          })
+
+          // Edge click handler
+          cy.on('tap', 'edge', function (evt) {
+            evt.preventDefault()
+            console.log('Edge clicked:', evt.target.id())
+            if (selectedEdge) {
+              selectedEdge.removeClass('selected')
+            }
+            selectedEdge = evt.target
+            selectedEdge.addClass('selected')
+            deleteEdgeBtn.classList.add('active')
+          })
+
+          // Clear edge selection when clicking on empty space
+          cy.on('tap', function (evt) {
+            if (evt.target === cy) {
+              clearSelectedEdge()
+            }
+          })
+
+          // Start in view mode
+          viewModeBtn.classList.add('active')
+        })
+        .catch((error) => {
+          console.error('Error loading graph data:', error)
+          alert('Failed to load graph data')
+        })
+    </script>
+  </body>
+</html>
