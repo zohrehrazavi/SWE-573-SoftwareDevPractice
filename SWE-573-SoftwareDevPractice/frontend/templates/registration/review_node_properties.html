@@ -1,0 +1,91 @@
+{% extends "registration/base.html" %}
+
+{% block content %}
+  <h2>Suggested Wikidata Entries for "{{ node.name }}"</h2>
+
+  <form method="POST" action="{% url 'approve_node_properties' node.id %}" id="propertiesForm">
+    {% csrf_token %}
+
+    <div id="propertiesContainer">
+      {% for key, value in suggested_properties.items %}
+        <div class="property-box" data-key="{{ key }}">
+          <label><strong>{{ key|title }}</strong></label>
+          <input type="text" name="property_{{ key }}" value="{{ value }}" readonly>
+
+          <div class="button-row">
+            <button type="button" class="approve-btn">Approve</button>
+            <button type="button" class="edit-btn">Edit</button>
+            <button type="button" class="remove-btn">Remove</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <button type="submit" style="margin-top: 20px;">Save Approved Properties</button>
+  </form>
+
+  <a href="{% url 'add_manual_property' node.id %}">➕ Add Properties Manually</a>
+
+  <style>
+    .property-box {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 10px;
+      background-color: #fdf7f0;
+      border-radius: 10px;
+    }
+    input[readonly] {
+      background-color: #f7f7f7;
+      border: none;
+      width: 70%;
+      padding: 6px;
+      margin-right: 10px;
+    }
+    .button-row {
+      margin-top: 10px;
+    }
+    .button-row button {
+      margin-right: 8px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    .approve-btn {
+      background-color: #d1f4d6;
+    }
+    .edit-btn {
+      background-color: #f7f0d1;
+    }
+    .remove-btn {
+      background-color: #f4d1d1;
+    }
+  </style>
+
+  <script>
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const container = this.closest('.property-box');
+        const input = container.querySelector('input');
+        input.removeAttribute('readonly');
+        input.focus();
+      });
+    });
+
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const container = this.closest('.property-box');
+        container.remove();
+      });
+    });
+
+    document.querySelectorAll('.approve-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const container = this.closest('.property-box');
+        const input = container.querySelector('input');
+        input.setAttribute('readonly', true);
+        alert(`Approved: ${input.name}`);
+      });
+    });
+  </script>
+{% endblock %}

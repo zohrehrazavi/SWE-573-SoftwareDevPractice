@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+  </head>
+  <body>
+    <div class="auth-box">
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        <div>
+          <input
+            type="text"
+            name="username"
+            placeholder="username"
+            class="auth-input"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            name="password"
+            placeholder="password"
+            class="auth-input"
+          />
+        </div>
+        <button type="submit" class="auth-button">LOGIN</button>
+      </form>
+      <div class="auth-footer">
+        Not registered?
+        <a href="{% url 'register' %}" class="auth-link">Create an account</a>
+      </div>
+    </div>
+  </body>
+</html>

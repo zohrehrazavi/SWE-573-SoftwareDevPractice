@@ -1,0 +1,7 @@
+{% extends 'registration/base.html' %} {% block content %}
+<div class="logout-container">
+  <h2>You have been successfully logged out</h2>
+  <p>Thank you for using our platform</p>
+  <a href="{% url 'login' %}" class="login-link">Log in again</a>
+</div>
+{% endblock %}

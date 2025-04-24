@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+  </head>
+  <body>
+    <div class="auth-box">
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="auth-button">REGISTER</button>
+      </form>
+      <div class="auth-footer">
+        Already have an account?
+        <a href="{% url 'login' %}" class="auth-link">Login</a>
+      </div>
+    </div>
+  </body>
+</html>
