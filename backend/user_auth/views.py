@@ -61,10 +61,36 @@ def approve_node_properties(request, node_id):
 
     if request.method == "POST":
         approved_props = {}
+        property_mapping = {
+            'instance of': 'instance_of',
+            'occupation': 'occupation',
+            'gender': 'gender',
+            'country of citizenship': 'country_of_citizenship',
+            'date of birth': 'date_of_birth',
+            'date of death': 'date_of_death',
+            'place of birth': 'place_of_birth',
+            'place of death': 'place_of_death',
+            'residence': 'residence',
+            'family name': 'family_name',
+            'given name': 'given_name',
+            'ethnic group': 'ethnic_group',
+            'eye color': 'eye_color',
+            'hair color': 'hair_color',
+            'hair type': 'hair_type',
+            'title': 'title',
+            'published in': 'published_in',
+            'name in native language': 'name_in_native_language',
+            'applies to part': 'applies_to_part',
+            'point in time': 'point_in_time'
+        }
+
         for key, value in request.POST.items():
             if key.startswith("property_") and value:
+                # Remove the "property_" prefix
                 field = key.replace("property_", "")
-                approved_props[field] = value
+                # Map the field to its underscore version
+                field_name = property_mapping.get(field, field)
+                approved_props[field_name] = value
 
         node.properties = approved_props
         node.save()
@@ -132,6 +158,25 @@ def create_board(request):
         form = BoardForm()
     return render(request, 'registration/create_board.html', {'form': form})
 
+def organize_properties_into_sections(properties):
+    sections = {
+        'Basic Information': ['instance_of', 'occupation'],
+        'Personal Details': ['gender', 'country_of_citizenship', 'family_name', 'given_name', 'name_in_native_language'],
+        'Biographical Data': ['date_of_birth', 'date_of_death', 'place_of_birth', 'place_of_death', 'residence', 'ethnic_group'],
+        'Physical Characteristics': ['eye_color', 'hair_color', 'hair_type'],
+        'Additional Information': ['title', 'published_in', 'applies_to_part', 'point_in_time']
+    }
+    
+    organized_properties = {section: {} for section in sections}
+    
+    if properties:
+        for prop_name, value in properties.items():
+            for section, props in sections.items():
+                if prop_name in props:
+                    organized_properties[section][prop_name] = value
+                    break
+    
+    return organized_properties
 
 @login_required
 def add_manual_property(request, node_id):
@@ -141,22 +186,26 @@ def add_manual_property(request, node_id):
     if request.method == "POST":
         form = ManualPropertyForm(request.POST)
         if form.is_valid():
+            if not node.properties:
+                node.properties = {}
             for field_name, value in form.cleaned_data.items():
                 if value:
-                    if not node.properties:
-                        node.properties = {}
-                    label = FORM_LABEL_TO_PROPERTY_LABEL.get(field_name, field_name)
-                    node.properties[label] = value
+                    # Use the field name directly as it already has underscores
+                    node.properties[field_name] = value
             node.save()
-            return redirect("add_manual_property", node_id=node.id)
+            return redirect("node_detail", node_id=node.id)
     else:
-        initial_data = map_properties_to_form_initial(node.properties or {})
+        # Use the properties directly as they should already have underscores
+        initial_data = node.properties or {}
         form = ManualPropertyForm(initial=initial_data)
 
+    organized_properties = organize_properties_into_sections(node.properties or {})
+    
     return render(request, "registration/add_property.html", {
         "form": form,
         "node": node,
-        "edited_field": edited_field  # Pass to template
+        "edited_field": edited_field,
+        "organized_properties": organized_properties
     })
 
 @login_required

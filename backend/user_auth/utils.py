@@ -3,28 +3,28 @@ import requests
 
 WIKIDATA_PROPERTIES = {
     #Identity & Demographics
-    "P31": "instance of",
+    "P31": "instance_of",
     "P106": "occupation",
     "P21": "gender",
-    "P27": "country of citizenship",
-    "P569": "date of birth",
-    "P570": "date of death",
-    "P19": "place of birth",
-    "P20": "place of death",
+    "P27": "country_of_citizenship",
+    "P569": "date_of_birth",
+    "P570": "date_of_death",
+    "P19": "place_of_birth",
+    "P20": "place_of_death",
     "P551": "residence",
-    "P734": "family name",
-    "P735": "given name",
-    "P172": "ethnic group",
-    "P4414": "eye color",
-    "P284": "hair color",
-    "P1884": "hair type",
+    "P734": "family_name",
+    "P735": "given_name",
+    "P172": "ethnic_group",
+    "P4414": "eye_color",
+    "P284": "hair_color",
+    "P1884": "hair_type",
 
     #Case-Specific
     "P1476": "title",                # Title of report/testimony
-    "P1433": "published in",         # Source
-    "P1559": "name in native language", # For aliases/nicknames
-    "P518": "applies to part",       # e.g., "scarf" in forensic report
-    "P585": "point in time"          # Date of event, sighting, etc.
+    "P1433": "published_in",         # Source
+    "P1559": "name_in_native_language", # For aliases/nicknames
+    "P518": "applies_to_part",       # e.g., "scarf" in forensic report
+    "P585": "point_in_time"          # Date of event, sighting, etc.
 }
 
 

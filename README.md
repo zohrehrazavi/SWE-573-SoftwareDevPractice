@@ -75,3 +75,40 @@ Login Page:     http://localhost:8001/auth/login/
 - `requirements.txt` – Python dependencies
 - `README.md` – Project documentation
 
+---
+
+## Testing
+
+The project includes comprehensive test suites for various functionalities:
+
+### Test Documentation
+
+- [General Test Documentation](backend/test/README.md) - Overview of test coverage for all modules
+- [Property Management Tests](backend/user_auth/tests/README.md) - Detailed documentation for property-related tests
+
+### Test Coverage
+
+The test suites cover:
+
+- Model and API endpoint tests
+- View access and form validation
+- Manual property management
+- Wikidata integration
+- Property approval workflow
+- Property display and organization
+
+### Running Tests
+
+For local development (using SQLite):
+
+```bash
+DJANGO_SETTINGS_MODULE=project.test_settings python manage.py test
+```
+
+With Docker (using PostgreSQL):
+
+```bash
+docker compose exec web python manage.py test
+```
+
+---

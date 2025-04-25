@@ -1,54 +1,217 @@
-<!DOCTYPE html>
-{% load custom_filters %}
-<html>
-<head>
-    <title>Edit Properties for Node: {{ node.name }}</title>
-    <style>
-        .property-group {
-            margin-bottom: 10px;
-        }
-        .existing {
-            display: flex;
-            align-items: center;
-        }
-        .existing span {
-            margin-right: 10px;
-        }
-        .edit-icon, .delete-icon {
-            margin-left: 10px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .edit-icon { color: green; }
-        .delete-icon { color: red; }
-    </style>
-</head>
-<body>
-    <h2>Edit Properties for Node: {{ node.name }}</h2>
+{% extends "registration/base.html" %} {% block content %}
+<div class="property-editor">
+  <h2>Edit Properties for Node: {{ node.name }}</h2>
 
-    <form method="post">
-        {% csrf_token %}
+  <form method="post" class="property-form">
+    {% csrf_token %}
 
-        {% for field in form %}
-    <div class="property-group">
-        {% with raw_label=field.label|strip_label %}
-            {% if node.properties and raw_label in node.properties and raw_label != edited_field %}
-                <div class="existing">
-                    <strong>{{ raw_label }}:</strong>
-                    <span>{{ node.properties|get_item:raw_label }}</span>
-                    <a href="?delete={{ raw_label }}" class="delete-icon" onclick="return confirm('Delete {{ raw_label }}?')">❌</a>
-                    <a href="?edit={{ raw_label }}" class="edit-icon">✏️</a>
-                </div>
-            {% else %}
-                {{ field.label_tag }} {{ field }}
-            {% endif %}
-        {% endwith %}
+    <!-- Basic Information Section -->
+    <div class="property-section">
+      <h3>Basic Information</h3>
+      <div class="property-grid">
+        <div class="form-field">
+          <label for="{{ form.instance_of.id_for_label }}">
+            Instance Of (Wikidata ID):
+          </label>
+          {{ form.instance_of }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.occupation.id_for_label }}">
+            Occupation (Wikidata ID):
+          </label>
+          {{ form.occupation }}
+        </div>
+      </div>
     </div>
-{% endfor %}
 
-        <button type="submit">Save Changes</button>
-    </form>
+    <!-- Personal Details Section -->
+    <div class="property-section">
+      <h3>Personal Details</h3>
+      <div class="property-grid">
+        <div class="form-field">
+          <label for="{{ form.gender.id_for_label }}">
+            Gender (Wikidata ID):
+          </label>
+          {{ form.gender }}
+        </div>
 
-    <p><a href="{% url 'node_detail' node.id %}">← Back to Node Detail</a></p>
-</body>
-</html>
+        <div class="form-field">
+          <label for="{{ form.country_of_citizenship.id_for_label }}">
+            Country of Citizenship (Wikidata ID):
+          </label>
+          {{ form.country_of_citizenship }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.family_name.id_for_label }}">Family Name:</label>
+          {{ form.family_name }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.given_name.id_for_label }}">Given Name:</label>
+          {{ form.given_name }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Biographical Data Section -->
+    <div class="property-section">
+      <h3>Biographical Data</h3>
+      <div class="property-grid">
+        <div class="form-field">
+          <label for="{{ form.date_of_birth.id_for_label }}">
+            Date of Birth (Wikidata ID):
+          </label>
+          {{ form.date_of_birth }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.date_of_death.id_for_label }}">
+            Date of Death (Wikidata ID):
+          </label>
+          {{ form.date_of_death }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.place_of_birth.id_for_label }}">
+            Place of Birth:
+          </label>
+          {{ form.place_of_birth }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.place_of_death.id_for_label }}">
+            Place of Death:
+          </label>
+          {{ form.place_of_death }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Physical Characteristics Section -->
+    <div class="property-section">
+      <h3>Physical Characteristics</h3>
+      <div class="property-grid">
+        <div class="form-field">
+          <label for="{{ form.eye_color.id_for_label }}">
+            Eye Color (Wikidata ID):
+          </label>
+          {{ form.eye_color }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.hair_color.id_for_label }}">
+            Hair Color (Wikidata ID):
+          </label>
+          {{ form.hair_color }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.hair_type.id_for_label }}">Hair Type:</label>
+          {{ form.hair_type }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Information Section -->
+    <div class="property-section">
+      <h3>Additional Information</h3>
+      <div class="property-grid">
+        <div class="form-field">
+          <label for="{{ form.title.id_for_label }}">Title:</label>
+          {{ form.title }}
+        </div>
+
+        <div class="form-field">
+          <label for="{{ form.published_in.id_for_label }}">
+            Published In:
+          </label>
+          {{ form.published_in }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save-button">Save Changes</button>
+      <a href="{% url 'node_detail' node.id %}" class="back-link">
+        ← Back to Node Detail
+      </a>
+    </div>
+  </form>
+</div>
+
+<style>
+  .property-editor {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .property-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+  }
+  .property-section h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+  }
+  .property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+  }
+  .form-field {
+    margin-bottom: 15px;
+  }
+  .form-field label {
+    display: block;
+    margin-bottom: 5px;
+    color: #495057;
+    font-weight: 500;
+  }
+  .form-field input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .form-field input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  .form-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  .save-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .save-button:hover {
+    background-color: #218838;
+  }
+  .back-link {
+    color: #6c757d;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: #5a6268;
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
