@@ -212,3 +212,11 @@ def add_manual_property(request, node_id):
 def custom_logout(request):
     logout(request)
     return render(request, 'registration/logout.html')
+
+@login_required
+def delete_board(request, board_id):
+    board = get_object_or_404(Board, id=board_id, owner=request.user)
+    if request.method == 'POST':
+        board.delete()
+        return redirect('home')
+    return redirect('home')
