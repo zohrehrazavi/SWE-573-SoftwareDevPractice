@@ -1,15 +1,126 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Create Board</title>
-</head>
-<body>
-    <h2>Create a New Board</h2>
-    <form method="post">
+  <head>
+    <title>Create a New Research Board</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <style>
+      .create-board-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e9ecef;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        background-color: var(--background-color);
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .tag-input {
+        margin-top: 8px;
+      }
+
+      .help-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 4px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .submit-btn {
+        padding: 12px 24px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .submit-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .back-link {
+        padding: 12px 24px;
+        background-color: #f8f9fa;
+        color: var(--secondary-color);
+        text-decoration: none;
+        border-radius: var(--border-radius);
+        border: 1px solid #dee2e6;
+        transition: all 0.2s;
+      }
+
+      .back-link:hover {
+        background-color: #e9ecef;
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="create-board-container">
+      <h2>Create a New Research Board</h2>
+      <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create Board</button>
-    </form>
-    <p><a href="{% url 'home' %}">Back to Home</a></p>
-</body>
+        <div class="form-group">
+          <label for="{{ form.name.id_for_label }}">Board Name</label>
+          {{ form.name }} {% if form.name.errors %}
+          <div class="error-message">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form.tags.id_for_label }}">Tags</label>
+          {{ form.tags }}
+          <div class="help-text">
+            Enter up to 5 tags, separated by commas (e.g., research, history,
+            science)
+          </div>
+          {% if form.tags.errors %}
+          <div class="error-message">{{ form.tags.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="button-group">
+          <button type="submit" class="submit-btn">Create Board</button>
+          <a href="{% url 'home' %}" class="back-link">Back to Home</a>
+        </div>
+      </form>
+    </div>
+  </body>
 </html>

@@ -1,10 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
+def validate_tags(value):
+    if not isinstance(value, list):
+        raise ValidationError('Tags must be a list')
+    if len(value) > 5:
+        raise ValidationError('Maximum 5 tags are allowed')
+    for tag in value:
+        if not isinstance(tag, str):
+            raise ValidationError('Tags must be strings')
+        if len(tag) > 20:
+            raise ValidationError('Tag length cannot exceed 20 characters')
+        if not tag.strip():
+            raise ValidationError('Empty tags are not allowed')
 
 class Board(models.Model):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    board_tags = models.JSONField(default=list, validators=[validate_tags], blank=True)
 
     def __str__(self):
         return self.name

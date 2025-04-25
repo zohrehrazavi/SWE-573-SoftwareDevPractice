@@ -13,17 +13,54 @@ class NodeForm(forms.ModelForm):
 class CustomUserCreationForm(UserCreationForm):
     age_confirmation = forms.BooleanField(
         required=True,
-        label="I’m over 18 years old"
+        label="I'm over 18 years old"
     )
 
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2', 'age_confirmation']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.help_text = None
+
 class BoardForm(forms.ModelForm):
+    board_tags = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter tags separated by commas (max 5 tags)',
+            'class': 'tag-input'
+        })
+    )
+
     class Meta:
         model = Board
-        fields = ['name']
+        fields = ['name', 'board_tags']
+
+    def clean_board_tags(self):
+        tags_str = self.cleaned_data.get('board_tags', '').strip()
+        if not tags_str:
+            return []
+            
+        tags = [tag.strip().lower() for tag in tags_str.split(',') if tag.strip()]
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_tags = []
+        for tag in tags:
+            if tag not in seen:
+                seen.add(tag)
+                unique_tags.append(tag)
+        
+        if len(unique_tags) > 5:
+            raise forms.ValidationError('Maximum 5 tags are allowed')
+            
+        for tag in unique_tags:
+            if len(tag) > 20:
+                raise forms.ValidationError(f'Tag "{tag}" is too long (maximum 20 characters)')
+            
+        return unique_tags
 
 class ManualPropertyForm(forms.Form):
     # Existing general properties

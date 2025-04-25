@@ -152,8 +152,9 @@ def create_board(request):
         if form.is_valid():
             board = form.save(commit=False)
             board.owner = request.user
+            board.board_tags = form.cleaned_data['board_tags']
             board.save()
-            return redirect('home')  # or redirect to a board list page if you prefer
+            return redirect('home')
     else:
         form = BoardForm()
     return render(request, 'registration/create_board.html', {'form': form})
