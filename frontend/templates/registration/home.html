@@ -25,6 +25,40 @@
         margin-right: 4px;
         margin-bottom: 2px;
       }
+      .toggle-group {
+        display: flex;
+        align-items: center;
+        background: #f3f4f6;
+        border-radius: 30px;
+        padding: 6px 10px;
+        margin-bottom: 16px;
+        width: fit-content;
+        box-shadow: 0 2px 6px #0001;
+      }
+      .toggle-btn {
+        border: none;
+        outline: none;
+        background: #e5e7eb;
+        color: #374151;
+        font-weight: bold;
+        font-size: 1.1em;
+        padding: 10px 28px;
+        border-radius: 22px;
+        margin: 0 2px;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+        box-shadow: none;
+      }
+      .toggle-btn.active-toggle {
+        background: #60a5fa;
+        color: #fff;
+        box-shadow: 0 2px 6px #0002;
+      }
+      .toggle-btn:not(.active-toggle):hover {
+        background: #d1d5db;
+        color: #374151;
+      }
     </style>
   </head>
   <body>
@@ -59,7 +93,20 @@
 
         <!-- Right side: Boards List -->
         <div class="boards-section">
-          <h2>Your Boards</h2>
+          <div class="toggle-group">
+            <a
+              href="?show=my"
+              class="toggle-btn{% if show != 'all' %} active-toggle{% endif %}"
+            >
+              My Boards
+            </a>
+            <a
+              href="?show=all"
+              class="toggle-btn{% if show == 'all' %} active-toggle{% endif %}"
+            >
+              All Boards
+            </a>
+          </div>
           {% if boards %}
           <ul class="boards-list">
             {% for board in boards %}
@@ -75,6 +122,7 @@
                 <a href="{% url 'board_detail' board.id %}" class="board-link">
                   {{ board.name }}
                 </a>
+                {% if board.owner == user %}
                 <button
                   class="delete-btn"
                   onclick="confirmDelete('{{ board.id }}', '{{ board.name|escapejs }}')"
@@ -83,9 +131,10 @@
                 >
                   <i class="fas fa-trash-alt"></i>
                 </button>
+                {% endif %}
               </div>
               <div class="board-meta">
-                Created on {{ board.created_at|date:"F j, Y, g:i a" }}
+                By {{ board.owner.username }} &bull; {{ board.created_at }}
               </div>
               {% if board.board_tags %}
               <div class="board-tags">
@@ -98,7 +147,10 @@
             {% endfor %}
           </ul>
           {% else %}
-          <p>You haven't created any boards yet.</p>
+          <p>
+            {% if show == 'all' %}No boards found.{% else %}You haven't created
+            any boards yet.{% endif %}
+          </p>
           {% endif %}
         </div>
       </div>
