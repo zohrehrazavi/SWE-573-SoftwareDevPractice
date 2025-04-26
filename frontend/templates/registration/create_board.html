@@ -135,7 +135,11 @@
   </head>
   <body>
     <div class="create-board-container">
+      {% if edit_mode %}
+      <h2>Edit Board</h2>
+      {% else %}
       <h2>Create a New Research Board</h2>
+      {% endif %}
       <form method="post" class="create-board-form">
         {% csrf_token %}
         <div class="form-group">
@@ -154,7 +158,12 @@
               autocomplete="off"
             />
             <div id="tags-list"></div>
-            <input type="hidden" name="board_tags" id="id_board_tags" />
+            <input
+              type="hidden"
+              name="board_tags"
+              id="id_board_tags"
+              value="{{ form.initial.board_tags|default_if_none:'' }}"
+            />
           </div>
           <small>
             Enter up to 5 tags. Press Enter or comma after each tag.
@@ -164,7 +173,9 @@
           {% endif %}
         </div>
         <div class="button-group">
-          <button type="submit" class="submit-btn">Create Board</button>
+          <button type="submit" class="submit-btn">
+            {% if edit_mode %}Save Changes{% else %}Create Board{% endif %}
+          </button>
           <a href="{% url 'home' %}" class="back-link">Back to Home</a>
         </div>
       </form>

@@ -159,6 +159,23 @@ def create_board(request):
         form = BoardForm()
     return render(request, 'registration/create_board.html', {'form': form})
 
+@login_required
+def edit_board(request, board_id):
+    board = get_object_or_404(Board, id=board_id, owner=request.user)
+    if request.method == 'POST':
+        form = BoardForm(request.POST, instance=board)
+        if form.is_valid():
+            board = form.save(commit=False)
+            board.owner = request.user
+            board.board_tags = form.cleaned_data['board_tags']
+            board.save()
+            return redirect('board_detail', board_id=board.id)
+    else:
+        # Prepopulate the tags as a comma-separated string for the JS tags input
+        initial = {'board_tags': ', '.join(board.board_tags) if board.board_tags else ''}
+        form = BoardForm(instance=board, initial=initial)
+    return render(request, 'registration/create_board.html', {'form': form, 'edit_mode': True, 'board': board})
+
 def organize_properties_into_sections(properties):
     sections = {
         'Basic Information': ['instance_of', 'occupation'],

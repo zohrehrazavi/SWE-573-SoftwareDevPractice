@@ -20,7 +20,7 @@ from backend.user_auth.views import (
     home_view, register, create_board, board_detail,
     create_node, node_detail, fetch_node_properties,
     add_manual_property, review_node_properties, approve_node_properties,
-    delete_node, custom_logout, delete_board
+    delete_node, custom_logout, delete_board, edit_board
 )
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
@@ -35,6 +35,7 @@ urlpatterns = [
     path("board/create/", create_board, name="create_board"),
     path("board/<int:board_id>/", board_detail, name="board_detail"),
     path("board/<int:board_id>/delete/", delete_board, name="delete_board"),
+    path("board/<int:board_id>/edit/", edit_board, name="edit_board"),
     path('board/<int:board_id>/node/create/', create_node, name='create_node'),
     path("node/<int:node_id>/fetch_properties/", fetch_node_properties, name="fetch_node_properties"),
     path('node/<int:node_id>/', node_detail, name='node_detail'),
