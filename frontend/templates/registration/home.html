@@ -131,7 +131,17 @@
             const boardName = item
               .querySelector('.board-link')
               .textContent.toLowerCase()
-            if (boardName.includes(searchTerm)) {
+            // Get all tag elements inside this board item
+            const tagElements = item.querySelectorAll('.tag-pill')
+            // Create an array of tag texts
+            const tags = Array.from(tagElements).map((tagEl) =>
+              tagEl.textContent.toLowerCase(),
+            )
+            // Check if search term is in board name or any tag
+            const matches =
+              boardName.includes(searchTerm) ||
+              tags.some((tag) => tag.includes(searchTerm))
+            if (matches) {
               item.style.display = ''
             } else {
               item.style.display = 'none'
