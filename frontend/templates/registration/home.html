@@ -11,6 +11,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
+    <!-- Add Font Awesome for the envelope icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
       .board-tags {
         margin-top: 6px;
@@ -59,6 +64,18 @@
         background: #d1d5db;
         color: #374151;
       }
+      .messages-btn {
+        position: relative;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin-right: 8px;
+        transition: color 0.2s;
+      }
+      .messages-btn:hover i {
+        color: #60a5fa;
+      }
     </style>
   </head>
   <body>
@@ -71,10 +88,25 @@
             <span class="username">{{ user.username }}</span>
           </h1>
         </div>
-        <form method="post" action="{% url 'logout' %}" style="margin: 0;">
-          {% csrf_token %}
-          <button type="submit" class="logout-btn">Logout</button>
-        </form>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button
+            class="messages-btn"
+            title="Messages"
+            style="
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 0;
+              margin-right: 8px;
+            "
+          >
+            <i class="fa-regular fa-envelope fa-lg" style="color: #374151;"></i>
+          </button>
+          <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
+        </div>
       </header>
 
       <div class="main-content">
