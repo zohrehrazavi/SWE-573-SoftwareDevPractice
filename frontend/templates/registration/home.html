@@ -49,7 +49,14 @@
           <ul class="boards-list">
             {% for board in boards %}
             <li class="board-item">
-              <div class="board-content">
+              <div
+                class="board-content"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                "
+              >
                 <a href="{% url 'board_detail' board.id %}" class="board-link">
                   {{ board.name }}
                 </a>
@@ -57,6 +64,7 @@
                   class="delete-btn"
                   onclick="confirmDelete('{{ board.id }}', '{{ board.name }}')"
                   title="Delete board"
+                  style="margin-left: 10px;"
                 >
                   <i class="fas fa-trash-alt"></i>
                 </button>
