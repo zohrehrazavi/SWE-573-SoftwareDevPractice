@@ -10,7 +10,7 @@ class BoardGraphAPIView(APIView):
 
     def get(self, request, board_id):
         try:
-            board = Board.objects.get(id=board_id, owner=request.user)
+            board = Board.objects.get(id=board_id)
         except Board.DoesNotExist:
             return Response({"error": "Board not found."}, status=404)
 
@@ -24,7 +24,8 @@ class BoardGraphAPIView(APIView):
                 "id": str(node.id),
                 "name": node.name,
                 "type": "main",
-                "properties": node.properties or {}
+                "properties": node.properties or {},
+                "created_by": node.created_by_id
             })
 
         # Add manual edges
@@ -33,10 +34,13 @@ class BoardGraphAPIView(APIView):
             edges.append({
                 "from": str(edge.from_node.id),
                 "to": str(edge.to_node.id),
-                "label": edge.label
+                "label": edge.label,
+                "created_by": edge.created_by_id
             })
 
-        return Response({
+        result = {
             "nodes": graph_nodes,
             "edges": edges
-        })
+        }
+        print(f"[DEBUG] BoardGraphAPIView for board {board_id}: {result}")
+        return Response(result)

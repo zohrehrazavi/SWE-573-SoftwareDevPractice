@@ -90,18 +90,21 @@
         </div>
         <div style="display: flex; align-items: center; gap: 16px;">
           <button
+            id="myEditRequestsBtn"
             class="messages-btn"
-            title="Messages"
-            style="
-              background: none;
-              border: none;
-              cursor: pointer;
-              padding: 0;
-              margin-right: 8px;
-            "
+            style="margin-right: 8px;"
           >
-            <i class="fa-regular fa-envelope fa-lg" style="color: #374151;"></i>
+            My Edit Requests
           </button>
+          {% if boards|length > 0 and boards.0.owner == user %}
+          <button
+            id="incomingEditRequestsBtn"
+            class="messages-btn"
+            style="margin-right: 8px;"
+          >
+            Incoming Edit Requests
+          </button>
+          {% endif %}
           <form method="post" action="{% url 'logout' %}" style="margin: 0;">
             {% csrf_token %}
             <button type="submit" class="logout-btn">Logout</button>
@@ -203,6 +206,41 @@
       </div>
     </div>
 
+    <!-- Edit Requests Modal -->
+    <div
+      id="editRequestsModal"
+      class="modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        class="modal-content"
+        style="
+          max-width: 400px;
+          width: 90vw;
+          margin: auto;
+          position: relative;
+          top: auto;
+          left: auto;
+          transform: none;
+          box-shadow: 0 8px 32px #0002;
+        "
+      >
+        <span class="close" id="closeEditRequests">&times;</span>
+        <h3>Pending Edit Requests</h3>
+        <div id="editRequestsList">Loading...</div>
+      </div>
+    </div>
+
     <script>
       // Simple client-side search functionality
       document
@@ -254,6 +292,193 @@
         const modal = document.getElementById('deleteModal')
         if (event.target == modal) {
           modal.style.display = 'none'
+        }
+      }
+
+      function fetchEditRequests(showModal) {
+        fetch('/api/edit_requests/')
+          .then((response) => response.json())
+          .then((data) => {
+            if (showModal) {
+              showEditRequestsModal(data.requests)
+            }
+          })
+          .catch((error) =>
+            console.error('Error fetching edit requests:', error),
+          )
+      }
+
+      function showEditRequestsModal(requests) {
+        const modal = document.getElementById('editRequestsModal')
+        const listDiv = document.getElementById('editRequestsList')
+        document.querySelector('#editRequestsModal h3').textContent =
+          'Incoming Edit Requests'
+        if (requests.length === 0) {
+          listDiv.innerHTML = '<p>No pending requests.</p>'
+        } else {
+          listDiv.innerHTML = requests
+            .map(
+              (r) => `
+            <div style=\"border-bottom:1px solid #eee;padding:8px 0;\">
+              <b>${r.sender}</b> requests edit on <b>${r.board_name}</b><br/>
+              <span style=\"color:#555;\">\"${r.message}\"</span><br/>
+              <span style=\"font-size:0.9em;color:#888;\">${r.created_at}</span><br/>
+              <button class='accept-btn' data-id='${r.id}' style='margin:6px 8px 0 0;padding:4px 12px;background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer;'>Accept</button>
+              <button class='deny-btn' data-id='${r.id}' style='margin:6px 0 0 0;padding:4px 12px;background:#ef4444;color:#fff;border:none;border-radius:4px;cursor:pointer;'>Deny</button>
+            </div>
+          `,
+            )
+            .join('')
+        }
+        modal.style.display = 'flex'
+        // Add event listeners for accept/deny
+        document.querySelectorAll('.accept-btn').forEach((btn) => {
+          btn.onclick = function () {
+            handleEditRequestAction(btn.dataset.id, 'accept')
+          }
+        })
+        document.querySelectorAll('.deny-btn').forEach((btn) => {
+          btn.onclick = function () {
+            handleEditRequestAction(btn.dataset.id, 'deny')
+          }
+        })
+      }
+
+      function handleEditRequestAction(requestId, action) {
+        fetch(`/api/edit_requests/${requestId}/action/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({ action: action }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === 'ok') {
+              fetchEditRequests(true)
+            } else {
+              alert(data.message || 'Failed to update request.')
+            }
+          })
+          .catch((error) => {
+            alert('Failed to update request.')
+          })
+      }
+
+      // Helper to get CSRF token
+      function getCookie(name) {
+        let cookieValue = null
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';')
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim()
+            if (cookie.substring(0, name.length + 1) === name + '=') {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              )
+              break
+            }
+          }
+        }
+        return cookieValue
+      }
+
+      // For non-owners, poll /api/my_edit_requests/ and show notification if any are accepted/denied
+      function fetchMyEditRequests(showModal) {
+        fetch('/api/my_edit_requests/')
+          .then((response) => response.json())
+          .then((data) => {
+            if (showModal) {
+              showMyEditRequestsModal(data.requests)
+            }
+          })
+          .catch((error) =>
+            console.error('Error fetching my edit requests:', error),
+          )
+      }
+
+      function showMyEditRequestsModal(requests) {
+        const modal = document.getElementById('editRequestsModal')
+        const listDiv = document.getElementById('editRequestsList')
+        document.querySelector('#editRequestsModal h3').textContent =
+          'My Edit Requests'
+        if (requests.length === 0) {
+          listDiv.innerHTML = '<p>No edit requests sent.</p>'
+        } else {
+          listDiv.innerHTML = requests
+            .map(
+              (r) => `
+            <div style="border-bottom:1px solid #eee;padding:8px 0;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <b>You requested edit on <b>${r.board_name}</b></b><br/>
+                <span style=\"font-size:0.95em;\">Status: <b>${r.status}</b></span><br/>
+                <span style=\"font-size:0.9em;color:#888;\">${r.created_at}</span>
+              </div>
+              <button class='delete-edit-request-btn' data-id='${r.id}' title='Delete' style='background:none;border:none;cursor:pointer;font-size:1.2em;color:#888;margin-left:8px;'>🗑️</button>
+            </div>
+          `,
+            )
+            .join('')
+        }
+        modal.style.display = 'flex'
+        document.querySelectorAll('.delete-edit-request-btn').forEach((btn) => {
+          btn.onclick = function () {
+            handleDeleteEditRequest(btn.dataset.id, fetchMyEditRequests)
+          }
+        })
+      }
+
+      function handleDeleteEditRequest(requestId, refreshFn) {
+        if (!confirm('Are you sure you want to delete this edit request?'))
+          return
+        fetch(`/api/edit_request/${requestId}/delete/`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === 'deleted') {
+              refreshFn(true)
+            } else {
+              alert(data.message || 'Failed to delete request.')
+            }
+          })
+          .catch((error) => {
+            alert('Failed to delete request.')
+          })
+      }
+
+      // Remove envelope logic and polling
+      // Only add button handlers
+      const myEditRequestsBtn = document.getElementById('myEditRequestsBtn')
+      if (myEditRequestsBtn) {
+        myEditRequestsBtn.onclick = function () {
+          fetchMyEditRequests(true)
+        }
+      }
+      const incomingEditRequestsBtn = document.getElementById(
+        'incomingEditRequestsBtn',
+      )
+      if (incomingEditRequestsBtn) {
+        incomingEditRequestsBtn.onclick = function () {
+          fetchEditRequests(true)
+        }
+      }
+
+      document.getElementById('closeEditRequests').onclick = function () {
+        document.getElementById('editRequestsModal').style.display = 'none'
+      }
+      window.onclick = function (event) {
+        const modal = document.getElementById('editRequestsModal')
+        const deleteModal = document.getElementById('deleteModal')
+        if (event.target == modal) {
+          modal.style.display = 'none'
+        }
+        if (event.target == deleteModal) {
+          deleteModal.style.display = 'none'
         }
       }
     </script>

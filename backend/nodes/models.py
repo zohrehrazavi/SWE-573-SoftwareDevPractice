@@ -29,6 +29,7 @@ class Node(models.Model):
     description = models.TextField(blank=True, null=True)  # NEW
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='nodes')
     properties = models.JSONField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_nodes')
 
     def __str__(self):
         return self.name
@@ -52,6 +53,25 @@ class ManualEdge(models.Model):
     from_node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='manual_edges_from')
     to_node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='manual_edges_to')
     label = models.CharField(max_length=50, default='')  # Adding label field with 50 char limit
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_manual_edges')
 
     def __str__(self):
         return f"{self.from_node.name} -> {self.label} -> {self.to_node.name}"
+
+class EditRequest(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='edit_requests')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_edit_requests')
+    message = models.TextField(blank=True)
+    status = models.CharField(max_length=16, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('denied', 'Denied')], default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"EditRequest from {self.sender.username} for {self.board.name} ({self.status})"
+
+class BoardEditor(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='editors')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('board', 'user')

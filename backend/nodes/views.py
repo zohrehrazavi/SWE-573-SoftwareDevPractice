@@ -4,8 +4,14 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Node, Board, ManualEdge, Edge
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 import json
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from backend.nodes.models import EditRequest, BoardEditor
+
+def user_can_edit_board(user, board):
+    return board.owner == user or BoardEditor.objects.filter(board=board, user=user).exists()
 
 @login_required
 def save_manual_edge(request):
@@ -22,18 +28,25 @@ def save_manual_edge(request):
             return JsonResponse({"status": "error", "message": "Edge label is too long (maximum 50 characters)"}, status=400)
 
         try:
-            board = Board.objects.get(id=board_id, owner=request.user)
+            board = Board.objects.get(id=board_id)
+            if not user_can_edit_board(request.user, board):
+                return JsonResponse({"status": "error", "message": "Permission denied."}, status=403)
             from_node = Node.objects.get(id=from_id, board=board)
             to_node = Node.objects.get(id=to_id, board=board)
-            ManualEdge.objects.get_or_create(
+            edge, created = ManualEdge.objects.get_or_create(
                 board=board, 
                 from_node=from_node, 
                 to_node=to_node,
-                defaults={'label': label}
+                defaults={'label': label, 'created_by': request.user}
             )
+            if not created:
+                # Always update label and creator to current user
+                edge.label = label
+                edge.created_by = request.user
+                edge.save()
             return JsonResponse({"status": "ok"})
-        except:
-            return JsonResponse({"status": "error"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
 @login_required
 def delete_manual_edge(request):
@@ -41,13 +54,22 @@ def delete_manual_edge(request):
         from_id = request.POST.get("from")
         to_id = request.POST.get("to")
         board_id = request.POST.get("board")
-
-        ManualEdge.objects.filter(
+        try:
+            board = Board.objects.get(id=board_id)
+        except Board.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Board not found."}, status=404)
+        # Find the edge
+        edge = ManualEdge.objects.filter(
             board_id=board_id,
             from_node_id=from_id,
             to_node_id=to_id
-        ).delete()
-
+        ).first()
+        if not edge:
+            return JsonResponse({"status": "error", "message": "Edge not found."}, status=404)
+        # Only allow board owner or edge creator to delete
+        if not (board.owner == request.user or edge.created_by == request.user):
+            return JsonResponse({"status": "error", "message": "You do not have permission to delete this edge."}, status=403)
+        edge.delete()
         return JsonResponse({"status": "deleted"})
 
 @login_required
@@ -66,33 +88,23 @@ def create_manual_edge(request):
         from_node_id = data.get('from_node_id')
         to_node_id = data.get('to_node_id')
         board_id = data.get('board_id')
-        label = data.get('label', '')  # Get label with empty string as default
-
-        # Validate input
+        label = data.get('label', '')
         if not all([from_node_id, to_node_id, board_id]):
             return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
-
-        # Get the board and verify ownership
-        board = Board.objects.get(id=board_id, user=request.user)
-        
-        # Get the nodes
+        board = Board.objects.get(id=board_id)
+        if not user_can_edit_board(request.user, board):
+            return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
         from_node = Node.objects.get(id=from_node_id, board=board)
         to_node = Node.objects.get(id=to_node_id, board=board)
-
-        # Check if edge already exists
         if Edge.objects.filter(from_node=from_node, to_node=to_node, board=board).exists():
             return JsonResponse({'status': 'error', 'message': 'Edge already exists'}, status=400)
-
-        # Create the edge with the label
         edge = Edge.objects.create(
             from_node=from_node,
             to_node=to_node,
             board=board,
             label=label
         )
-
         return JsonResponse({'status': 'success', 'message': 'Edge created successfully'})
-
     except Board.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Board not found'}, status=404)
     except Node.DoesNotExist:
@@ -105,3 +117,85 @@ def create_manual_edge(request):
 class NodeListCreateView(generics.ListCreateAPIView):
     queryset = Node.objects.all()
     serializer_class = NodeSerializer
+
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def request_edit_access(request, board_id):
+    import json
+    data = json.loads(request.body.decode('utf-8'))
+    message = data.get('message', '')
+    board = Board.objects.get(id=board_id)
+    # Prevent duplicate pending requests from the same user
+    if EditRequest.objects.filter(board=board, sender=request.user, status='pending').exists():
+        return JsonResponse({'status': 'error', 'message': 'You already have a pending request.'}, status=400)
+    EditRequest.objects.create(board=board, sender=request.user, message=message)
+    return JsonResponse({'status': 'ok'})
+
+@login_required
+@require_http_methods(["GET"])
+def get_edit_requests(request):
+    # Get all pending requests for boards owned by the user
+    requests = EditRequest.objects.filter(board__owner=request.user, status='pending').select_related('board', 'sender').order_by('-created_at')
+    data = [
+        {
+            'id': r.id,
+            'board_id': r.board.id,
+            'board_name': r.board.name,
+            'sender': r.sender.username,
+            'message': r.message,
+            'created_at': r.created_at.strftime('%Y-%m-%d %H:%M'),
+            'status': r.status,
+        }
+        for r in requests
+    ]
+    return JsonResponse({'requests': data})
+
+@login_required
+@require_POST
+def edit_request_action(request, request_id):
+    import json
+    try:
+        req = EditRequest.objects.select_related('board').get(id=request_id)
+        if req.board.owner != request.user:
+            return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
+        data = json.loads(request.body.decode('utf-8'))
+        action = data.get('action')
+        if action not in ['accept', 'deny']:
+            return JsonResponse({'status': 'error', 'message': 'Invalid action.'}, status=400)
+        req.status = 'accepted' if action == 'accept' else 'denied'
+        req.save()
+        if action == 'accept':
+            BoardEditor.objects.get_or_create(board=req.board, user=req.sender)
+        return JsonResponse({'status': 'ok'})
+    except EditRequest.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Request not found.'}, status=404)
+
+@login_required
+@require_GET
+def my_edit_requests(request):
+    # For the logged-in user, return their edit requests (pending, accepted, denied)
+    requests = EditRequest.objects.filter(sender=request.user).select_related('board').order_by('-created_at')
+    data = [
+        {
+            'id': r.id,
+            'board_id': r.board.id,
+            'board_name': r.board.name,
+            'status': r.status,
+            'created_at': r.created_at.strftime('%Y-%m-%d %H:%M'),
+        }
+        for r in requests
+    ]
+    return JsonResponse({'requests': data})
+
+@login_required
+@require_http_methods(["DELETE"])
+def delete_edit_request(request, request_id):
+    try:
+        req = EditRequest.objects.select_related('board').get(id=request_id)
+        if req.sender != request.user and req.board.owner != request.user:
+            return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
+        req.delete()
+        return JsonResponse({'status': 'deleted'})
+    except EditRequest.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Request not found.'}, status=404)

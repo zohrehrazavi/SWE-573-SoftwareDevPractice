@@ -211,6 +211,23 @@
         border-color: #fff;
         box-shadow: 0 0 0 3px #f44336;
       }
+      .ask-edit-btn {
+        background: #fbbf24;
+        color: #222;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 22px;
+        font-size: 1em;
+        font-weight: 500;
+        margin: 10px 10px 0 0;
+        text-decoration: none;
+        transition: background 0.2s;
+        box-shadow: 0 2px 8px #0001;
+        cursor: pointer;
+      }
+      .ask-edit-btn:hover {
+        background: #f59e42;
+      }
     </style>
   </head>
   <body>
@@ -248,6 +265,26 @@
             </span>
             {% endif %} {% if node.properties %}
             <span style="color: #10b981; font-size: 0.95em;">(Enriched)</span>
+            {% endif %} {% if board.owner == user %}
+            <a
+              href="{% url 'delete_node' node.id %}"
+              class="delete-btn"
+              style="margin-left: 10px; color: #e11d48; font-size: 1.1em;"
+              title="Delete node"
+              onclick="return confirm('Are you sure you want to delete this node?');"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </a>
+            {% elif node.created_by_id == user.id %}
+            <a
+              href="{% url 'delete_node' node.id %}"
+              class="delete-btn"
+              style="margin-left: 10px; color: #e11d48; font-size: 1.1em;"
+              title="Delete node"
+              onclick="return confirm('Are you sure you want to delete this node?');"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </a>
             {% endif %}
           </div>
           {% endfor %} {% else %}
@@ -255,7 +292,7 @@
           {% endif %}
         </div>
       </div>
-      {% if board.owner == user %}
+      {% if is_board_editor %}
       <a href="{% url 'create_node' board.id %}" class="add-node-btn">
         + Add New Node
       </a>
@@ -263,12 +300,39 @@
       <a href="{% url 'home' %}" class="back-home-btn">&#8592; Back to Home</a>
       <div class="controls">
         <div class="mode-button" id="viewMode">View Properties</div>
-        {% if board.owner == user %}
+        {% if is_board_editor %}
         <div class="mode-button" id="connectMode">Connect Nodes</div>
+        {% endif %} {% if board.owner == user %}
         <div class="delete-button" id="deleteEdge">Delete Connection</div>
         {% endif %}
       </div>
       <div id="cy"></div>
+      {% if not is_board_editor %}
+      <div id="editRequestStatusArea">
+        <button class="ask-edit-btn" id="askEditBtn">Ask for Edit</button>
+      </div>
+      <div id="askEditModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeAskEdit">&times;</span>
+          <h3>Request Edit Access</h3>
+          <textarea
+            id="editRequestMsg"
+            rows="3"
+            style="width: 100%; margin-bottom: 12px;"
+            placeholder="Why do you want to edit this board?"
+          ></textarea>
+          <button id="sendEditRequest" class="add-node-btn">
+            Send Request
+          </button>
+          <div
+            id="editRequestSentMsg"
+            style="display: none; color: #10b981; margin-top: 10px;"
+          >
+            Your message was sent, please wait for accept.
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
 
     <!-- Node Details Modal -->
@@ -288,16 +352,18 @@
         let selectedEdge = null
         let isConnectMode = false
         const modal = document.getElementById('nodeModal')
-        const closeBtn = document.getElementsByClassName('close')[0]
+        const closeBtns = document.getElementsByClassName('close')
         const viewModeBtn = document.getElementById('viewMode')
         const connectModeBtn = document.getElementById('connectMode')
         const deleteEdgeBtn = document.getElementById('deleteEdge')
         let cy = null
 
         function clearSelectedEdge() {
-          if (selectedEdge) {
+          if (selectedEdge && typeof selectedEdge.removeClass === 'function') {
             selectedEdge.removeClass('selected')
             selectedEdge = null
+          }
+          if (deleteEdgeBtn) {
             deleteEdgeBtn.classList.remove('active')
           }
         }
@@ -371,9 +437,13 @@
         }
 
         // Close modal when clicking the X
-        if (closeBtn) {
-          closeBtn.onclick = function () {
-            modal.style.display = 'none'
+        for (let i = 0; i < closeBtns.length; i++) {
+          closeBtns[i].onclick = function () {
+            // Find the closest parent with class 'modal' and hide it
+            let modal = this.closest('.modal')
+            if (modal) {
+              modal.style.display = 'none'
+            }
           }
         }
 
@@ -403,6 +473,7 @@
                     id: node.id.toString(),
                     label: node.name,
                     properties: node.properties || {},
+                    created_by: node.created_by,
                   },
                 })
               })
@@ -416,6 +487,7 @@
                     source: edge.from.toString(),
                     target: edge.to.toString(),
                     label: edge.label || '',
+                    created_by: edge.created_by,
                   },
                 })
               })
@@ -513,6 +585,224 @@
                 },
               })
 
+              // Overlay delete icon for nodes/edges the user can delete
+              const currentUserId = parseInt('{{ user.id }}')
+              const boardOwnerId = parseInt('{{ board.owner.id }}')
+
+              // Container for overlays
+              let overlayContainer = document.getElementById('cy-overlays')
+              if (!overlayContainer) {
+                overlayContainer = document.createElement('div')
+                overlayContainer.id = 'cy-overlays'
+                overlayContainer.style.position = 'absolute'
+                overlayContainer.style.top = '0'
+                overlayContainer.style.left = '0'
+                overlayContainer.style.width = '100%'
+                overlayContainer.style.height = '100%'
+                overlayContainer.style.pointerEvents = 'none'
+                overlayContainer.style.zIndex = '1000'
+                // Append as sibling to #cy, not as child
+                const cyParent = document.getElementById('cy').parentNode
+                cyParent.style.position = 'relative'
+                cyParent.appendChild(overlayContainer)
+              }
+
+              function clearOverlays() {
+                overlayContainer.innerHTML = ''
+              }
+
+              function addDeleteOverlayForNode(node) {
+                const pos = node.renderedPosition()
+                const cyRect = document
+                  .getElementById('cy')
+                  .getBoundingClientRect()
+                const parentRect = overlayContainer.getBoundingClientRect()
+                const offsetX = cyRect.left - parentRect.left
+                const offsetY = cyRect.top - parentRect.top
+                // X (delete) button
+                const xBtn = document.createElement('div')
+                xBtn.textContent = '×'
+                xBtn.title = 'Delete node'
+                xBtn.style.position = 'absolute'
+                xBtn.style.left = pos.x + offsetX + 20 + 'px'
+                xBtn.style.top = pos.y + offsetY - 20 + 'px'
+                xBtn.style.width = '18px'
+                xBtn.style.height = '18px'
+                xBtn.style.background = '#fff'
+                xBtn.style.color = '#e11d48'
+                xBtn.style.border = '1px solid #e11d48'
+                xBtn.style.borderRadius = '50%'
+                xBtn.style.fontSize = '14px'
+                xBtn.style.fontWeight = 'bold'
+                xBtn.style.textAlign = 'center'
+                xBtn.style.lineHeight = '18px'
+                xBtn.style.cursor = 'pointer'
+                xBtn.style.pointerEvents = 'auto'
+                xBtn.style.zIndex = '1001'
+                xBtn.onclick = function (e) {
+                  e.stopPropagation()
+                  if (confirm('Delete this node?')) {
+                    window.location.href = `/node/${node.id()}/delete/`
+                  }
+                }
+                overlayContainer.appendChild(xBtn)
+                // Pen (edit) button
+                const penBtn = document.createElement('div')
+                penBtn.innerHTML =
+                  '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.146 2.854a.5.5 0 0 1 .708 0l.292.292a.5.5 0 0 1 0 .708l-8.5 8.5a.5.5 0 0 1-.168.11l-3 1a.5.5 0 0 1-.637-.637l1-3a.5.5 0 0 1 .11-.168l8.5-8.5zM11.207 3.5L3.5 11.207V12.5h1.293L12.5 4.793 11.207 3.5z" fill="#2563eb"/></svg>'
+                penBtn.title = 'Edit node properties'
+                penBtn.style.position = 'absolute'
+                penBtn.style.left = pos.x + offsetX + 40 + 'px'
+                penBtn.style.top = pos.y + offsetY - 20 + 'px'
+                penBtn.style.width = '18px'
+                penBtn.style.height = '18px'
+                penBtn.style.background = '#fff'
+                penBtn.style.border = '1px solid #2563eb'
+                penBtn.style.borderRadius = '50%'
+                penBtn.style.fontSize = '14px'
+                penBtn.style.fontWeight = 'bold'
+                penBtn.style.textAlign = 'center'
+                penBtn.style.lineHeight = '18px'
+                penBtn.style.cursor = 'pointer'
+                penBtn.style.pointerEvents = 'auto'
+                penBtn.style.zIndex = '1001'
+                penBtn.style.display = 'flex'
+                penBtn.style.alignItems = 'center'
+                penBtn.style.justifyContent = 'center'
+                penBtn.onclick = function (e) {
+                  e.stopPropagation()
+                  window.location.href = `/node/${node.id()}/`
+                }
+                overlayContainer.appendChild(penBtn)
+              }
+
+              // Only show edge overlays on click
+              let currentEdgeOverlay = null
+
+              function clearEdgeOverlay() {
+                if (currentEdgeOverlay) {
+                  currentEdgeOverlay.remove()
+                  currentEdgeOverlay = null
+                }
+              }
+
+              function addDeleteOverlayForEdge(edge) {
+                const srcPos = cy
+                  .getElementById(edge.data('source'))
+                  .renderedPosition()
+                const tgtPos = cy
+                  .getElementById(edge.data('target'))
+                  .renderedPosition()
+                const cyRect = document
+                  .getElementById('cy')
+                  .getBoundingClientRect()
+                const parentRect = overlayContainer.getBoundingClientRect()
+                const offsetX = cyRect.left - parentRect.left
+                const offsetY = cyRect.top - parentRect.top
+                const midX = (srcPos.x + tgtPos.x) / 2
+                const midY = (srcPos.y + tgtPos.y) / 2
+                const xBtn = document.createElement('div')
+                xBtn.textContent = '×'
+                xBtn.title = 'Delete connection'
+                xBtn.style.position = 'absolute'
+                xBtn.style.left = midX + offsetX + 10 + 'px'
+                xBtn.style.top = midY + offsetY - 10 + 'px'
+                xBtn.style.width = '18px'
+                xBtn.style.height = '18px'
+                xBtn.style.background = '#fff'
+                xBtn.style.color = '#e11d48'
+                xBtn.style.border = '1px solid #e11d48'
+                xBtn.style.borderRadius = '50%'
+                xBtn.style.fontSize = '14px'
+                xBtn.style.fontWeight = 'bold'
+                xBtn.style.textAlign = 'center'
+                xBtn.style.lineHeight = '18px'
+                xBtn.style.cursor = 'pointer'
+                xBtn.style.pointerEvents = 'auto'
+                xBtn.style.zIndex = '1001'
+                xBtn.onclick = function (e) {
+                  e.stopPropagation()
+                  if (confirm('Delete this connection?')) {
+                    const sourceNode = edge.data('source')
+                    const targetNode = edge.data('target')
+                    fetch('/api/edge/delete/', {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                      },
+                      credentials: 'include',
+                      body: `from=${sourceNode}&to=${targetNode}&board=${boardId}`,
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        if (data.status === 'deleted') {
+                          cy.remove(edge)
+                          clearEdgeOverlay()
+                        } else {
+                          alert(data.message || 'Failed to delete connection')
+                        }
+                      })
+                      .catch((error) => {
+                        alert('Failed to delete connection: ' + error.message)
+                      })
+                  }
+                }
+                overlayContainer.appendChild(xBtn)
+                currentEdgeOverlay = xBtn
+              }
+
+              function addAllOverlays() {
+                clearOverlays()
+                cy.nodes().forEach(function (node) {
+                  const data = node.data()
+                  if (
+                    currentUserId !== boardOwnerId &&
+                    data.created_by === currentUserId
+                  ) {
+                    addDeleteOverlayForNode(node)
+                  }
+                })
+                // Do not add edge overlays here
+              }
+
+              cy.on('zoom pan resize', function () {
+                addAllOverlays()
+                clearEdgeOverlay()
+              })
+
+              cy.on('position', 'node', function () {
+                addAllOverlays()
+                clearEdgeOverlay()
+              })
+
+              cy.on('tap', function (event) {
+                if (event.target === cy) {
+                  clearEdgeOverlay()
+                }
+              })
+
+              cy.on('tap', 'node', function () {
+                clearEdgeOverlay()
+              })
+
+              cy.on('tap', 'edge', function (evt) {
+                clearEdgeOverlay()
+                const edge = evt.target
+                const data = edge.data()
+                if (
+                  currentUserId !== boardOwnerId &&
+                  data.created_by === currentUserId
+                ) {
+                  addDeleteOverlayForEdge(edge)
+                }
+              })
+
+              cy.ready(function () {
+                addAllOverlays()
+                clearEdgeOverlay()
+              })
+
               // Node click handler
               cy.on('tap', 'node', function (evt) {
                 const node = evt.target
@@ -556,15 +846,7 @@
                       })
                       .then((data) => {
                         if (data.status === 'ok') {
-                          cy.add({
-                            group: 'edges',
-                            data: {
-                              id: `edge-${fromId}-${toId}`,
-                              source: fromId,
-                              target: toId,
-                              label: label || '',
-                            },
-                          })
+                          loadGraph()
                         } else {
                           throw new Error('Failed to create connection')
                         }
@@ -674,6 +956,64 @@
               ? 'rotate(90deg)'
               : 'rotate(0deg)'
           })
+        }
+
+        var askEditBtn = document.getElementById('askEditBtn')
+        var askEditModal = document.getElementById('askEditModal')
+        var closeAskEdit = document.getElementById('closeAskEdit')
+        var sendEditRequest = document.getElementById('sendEditRequest')
+        var editRequestSentMsg = document.getElementById('editRequestSentMsg')
+        var editRequestStatusArea = document.getElementById(
+          'editRequestStatusArea',
+        )
+        if (
+          askEditBtn &&
+          askEditModal &&
+          closeAskEdit &&
+          sendEditRequest &&
+          editRequestSentMsg &&
+          editRequestStatusArea
+        ) {
+          askEditBtn.onclick = function () {
+            askEditModal.style.display = 'block'
+          }
+          closeAskEdit.onclick = function () {
+            askEditModal.style.display = 'none'
+          }
+          window.onclick = function (event) {
+            if (event.target == askEditModal) {
+              askEditModal.style.display = 'none'
+            }
+          }
+          sendEditRequest.onclick = function () {
+            const message = document.getElementById('editRequestMsg').value
+            if (!message) {
+              alert('Please enter a message.')
+              return
+            }
+            fetch(`/api/board/${boardId}/request_edit/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+              },
+              body: JSON.stringify({ message: message }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === 'ok') {
+                  askEditModal.style.display = 'none'
+                  // Show the message in the same area and disable the button
+                  editRequestStatusArea.innerHTML = `<div style='color:#10b981;margin:16px 0;'>Your message was sent, please wait for accept.</div><button class='ask-edit-btn' id='askEditBtn' disabled style='opacity:0.6;cursor:not-allowed;'>Ask for Edit</button>`
+                } else {
+                  alert(data.message || 'Failed to send request.')
+                }
+              })
+              .catch((error) => {
+                console.error('Error:', error)
+                alert('Failed to send request.')
+              })
+          }
         }
       })
     </script>

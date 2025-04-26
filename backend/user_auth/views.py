@@ -11,6 +11,7 @@ from django.contrib import messages
 from .forms import ManualPropertyForm
 from .utils import map_properties_to_form_initial, FORM_LABEL_TO_PROPERTY_LABEL
 from django.contrib.auth import logout
+from django.http import HttpResponseForbidden
 
 def custom_logout_view(request):
     logout(request)
@@ -21,6 +22,9 @@ def custom_logout_view(request):
 def delete_node(request, node_id):
     node = get_object_or_404(Node, id=node_id)
     board_id = node.board.id
+    # Only allow board owner or node creator to delete
+    if not (node.board.owner == request.user or node.created_by == request.user):
+        return HttpResponseForbidden("You do not have permission to delete this node.")
     node.delete()
     return redirect('board_detail', board_id=board_id)
 
@@ -105,13 +109,19 @@ def approve_node_properties(request, node_id):
 
 @login_required
 def create_node(request, board_id):
-    board = Board.objects.get(id=board_id, owner=request.user)
+    from backend.nodes.models import BoardEditor
+    board = get_object_or_404(Board, id=board_id)
+    # Check if user is owner or editor
+    is_editor = (board.owner == request.user) or board.editors.filter(user=request.user).exists()
+    if not is_editor:
+        return HttpResponseForbidden("You do not have permission to add nodes to this board.")
 
     if request.method == 'POST':
         form = NodeForm(request.POST)
         if form.is_valid():
             node = form.save(commit=False)
             node.board = board
+            node.created_by = request.user
             node.save()
             return redirect('board_detail', board_id=board.id)
     else:
@@ -121,19 +131,24 @@ def create_node(request, board_id):
 
 @login_required
 def board_detail(request, board_id):
-    board = Board.objects.get(id=board_id, owner=request.user)  # secure ownership check
+    board = Board.objects.get(id=board_id)
     nodes = board.nodes.all()  # all nodes related to this board
-
+    is_board_editor = (board.owner == request.user) or board.editors.filter(user=request.user).exists()
     return render(request, 'registration/board_detail.html', {
         'board': board,
-        'nodes': nodes
+        'nodes': nodes,
+        'is_board_editor': is_board_editor,
     })
 
 
 @login_required
 def home_view(request):
-    user_boards = Board.objects.filter(owner=request.user)
-    return render(request, 'registration/home.html', {'boards': user_boards})
+    show = request.GET.get('show', 'my')
+    if show == 'all':
+        boards = Board.objects.all()
+    else:
+        boards = Board.objects.filter(owner=request.user)
+    return render(request, 'registration/home.html', {'boards': boards, 'show': show})
 
 def register(request):
     if request.method == 'POST':

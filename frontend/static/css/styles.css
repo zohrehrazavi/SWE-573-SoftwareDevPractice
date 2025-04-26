@@ -1,0 +1,17 @@
+/* Add or update styles for the new edit request buttons */
+.messages-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  margin-right: 8px;
+  font-size: 1em;
+  color: #374151;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.messages-btn:hover {
+  background: #f3f4f6;
+  color: #e11d48;
+}
+/* Remove envelope-specific styles if any */ 
