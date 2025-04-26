@@ -62,7 +62,7 @@
                 </a>
                 <button
                   class="delete-btn"
-                  onclick="confirmDelete('{{ board.id }}', '{{ board.name }}')"
+                  onclick="confirmDelete('{{ board.id }}', '{{ board.name|escapejs }}')"
                   title="Delete board"
                   style="margin-left: 10px;"
                 >

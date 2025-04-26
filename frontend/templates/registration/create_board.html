@@ -92,26 +92,73 @@
         font-size: 0.875rem;
         margin-top: 4px;
       }
+
+      #tags-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+      }
+      #tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        margin-top: 0.5em;
+      }
+      .tag-chip {
+        background: #e0e7ef;
+        color: #333;
+        border-radius: 16px;
+        padding: 0.2em 0.8em 0.2em 0.8em;
+        display: flex;
+        align-items: center;
+        font-size: 0.95em;
+      }
+      .tag-chip .remove-tag {
+        margin-left: 0.5em;
+        cursor: pointer;
+        color: #888;
+        font-weight: bold;
+      }
+      #tags-input {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 0.5em;
+        font-size: 1em;
+        transition: background 0.2s;
+      }
+      #tags-input.disabled-tag-input {
+        background: #f0f0f0;
+        color: #aaa;
+        cursor: not-allowed;
+      }
     </style>
   </head>
   <body>
     <div class="create-board-container">
       <h2>Create a New Research Board</h2>
-      <form method="post">
+      <form method="post" class="create-board-form">
         {% csrf_token %}
         <div class="form-group">
-          <label for="{{ form.name.id_for_label }}">Board Name</label>
+          <label for="id_name">Board Name</label>
           {{ form.name }} {% if form.name.errors %}
           <div class="error-message">{{ form.name.errors }}</div>
           {% endif %}
         </div>
         <div class="form-group">
-          <label for="{{ form.tags.id_for_label }}">Tags</label>
-          {{ form.tags }}
-          <div class="help-text">
-            Enter up to 5 tags, separated by commas (e.g., research, history,
-            science)
+          <label for="id_board_tags">Tags</label>
+          <div id="tags-input-container">
+            <input
+              type="text"
+              id="tags-input"
+              placeholder="Type a tag and press Enter (max 5 tags)"
+              autocomplete="off"
+            />
+            <div id="tags-list"></div>
+            <input type="hidden" name="board_tags" id="id_board_tags" />
           </div>
+          <small>
+            Enter up to 5 tags. Press Enter or comma after each tag.
+          </small>
           {% if form.tags.errors %}
           <div class="error-message">{{ form.tags.errors }}</div>
           {% endif %}
@@ -122,5 +169,79 @@
         </div>
       </form>
     </div>
+
+    <script>
+      const tagsInput = document.getElementById('tags-input')
+      const tagsList = document.getElementById('tags-list')
+      const hiddenTagsInput = document.getElementById('id_board_tags')
+      let tags = []
+
+      function updateTags() {
+        tagsList.innerHTML = ''
+        tags.forEach((tag, idx) => {
+          const chip = document.createElement('span')
+          chip.className = 'tag-chip'
+          chip.textContent = tag
+          const remove = document.createElement('span')
+          remove.className = 'remove-tag'
+          remove.textContent = '×'
+          remove.onclick = () => {
+            tags.splice(idx, 1)
+            updateTags()
+          }
+          chip.appendChild(remove)
+          tagsList.appendChild(chip)
+        })
+        hiddenTagsInput.value = tags.join(', ')
+        tagsInput.disabled = tags.length >= 5
+        tagsInput.placeholder =
+          tags.length >= 5
+            ? 'Maximum 5 tags reached'
+            : 'Type a tag and press Enter (max 5 tags)'
+        if (tags.length >= 5) {
+          tagsInput.classList.add('disabled-tag-input')
+        } else {
+          tagsInput.classList.remove('disabled-tag-input')
+        }
+      }
+
+      tagsInput.addEventListener('keydown', function (e) {
+        if ((e.key === 'Enter' || e.key === ',') && this.value.trim()) {
+          e.preventDefault()
+          let newTag = this.value.trim().replace(/,/g, '')
+          if (
+            newTag &&
+            !tags.includes(newTag.toLowerCase()) &&
+            tags.length < 5
+          ) {
+            tags.push(newTag.toLowerCase())
+            updateTags()
+          }
+          this.value = ''
+        }
+      })
+
+      tagsInput.addEventListener('blur', function () {
+        if (this.value.trim() && tags.length < 5) {
+          let newTag = this.value.trim().replace(/,/g, '')
+          if (newTag && !tags.includes(newTag.toLowerCase())) {
+            tags.push(newTag.toLowerCase())
+            updateTags()
+          }
+          this.value = ''
+        }
+      })
+
+      // If the form is re-rendered with errors and tags are present, parse them
+      window.addEventListener('DOMContentLoaded', function () {
+        if (hiddenTagsInput.value) {
+          tags = hiddenTagsInput.value
+            .split(',')
+            .map((t) => t.trim().toLowerCase())
+            .filter((t) => t)
+          updateTags()
+        }
+      })
+    </script>
   </body>
 </html>
