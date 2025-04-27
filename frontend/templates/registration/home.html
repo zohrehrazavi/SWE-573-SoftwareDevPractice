@@ -76,6 +76,16 @@
       .messages-btn:hover i {
         color: #60a5fa;
       }
+      .notification-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: #ff3b3b;
+        border-radius: 50%;
+        margin-left: 6px;
+        vertical-align: middle;
+        box-shadow: 0 0 4px #ff3b3b88;
+      }
     </style>
   </head>
   <body>
@@ -92,17 +102,27 @@
           <button
             id="myEditRequestsBtn"
             class="messages-btn"
-            style="margin-right: 8px;"
+            style="margin-right: 8px; position: relative;"
           >
             My Edit Requests
+            <span
+              id="myEditRequestsDot"
+              class="notification-dot"
+              style="display: none;"
+            ></span>
           </button>
           {% if boards|length > 0 and boards.0.owner == user %}
           <button
             id="incomingEditRequestsBtn"
             class="messages-btn"
-            style="margin-right: 8px;"
+            style="margin-right: 8px; position: relative;"
           >
             Incoming Edit Requests
+            <span
+              id="incomingEditRequestsDot"
+              class="notification-dot"
+              style="display: none;"
+            ></span>
           </button>
           {% endif %}
           <form method="post" action="{% url 'logout' %}" style="margin: 0;">
@@ -409,13 +429,23 @@
           listDiv.innerHTML = requests
             .map(
               (r) => `
-            <div style="border-bottom:1px solid #eee;padding:8px 0;display:flex;align-items:center;justify-content:space-between;">
+            <div class="my-edit-request-item" data-id="${
+              r.id
+            }" style="border-bottom:1px solid #eee;padding:8px 0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
               <div>
-                <b>You requested edit on <b>${r.board_name}</b></b><br/>
-                <span style=\"font-size:0.95em;\">Status: <b>${r.status}</b></span><br/>
-                <span style=\"font-size:0.9em;color:#888;\">${r.created_at}</span>
+                <b style="font-weight:${
+                  r.read_by_sender ? 'normal' : 'bold'
+                };">You requested edit on <b>${r.board_name}</b></b><br/>
+                <span style=\"font-size:0.95em;\">Status: <b>${
+                  r.status
+                }</b></span><br/>
+                <span style=\"font-size:0.9em;color:#888;\">${
+                  r.created_at
+                }</span>
               </div>
-              <button class='delete-edit-request-btn' data-id='${r.id}' title='Delete' style='background:none;border:none;cursor:pointer;font-size:1.2em;color:#888;margin-left:8px;'>🗑️</button>
+              <button class='delete-edit-request-btn' data-id='${
+                r.id
+              }' title='Delete' style='background:none;border:none;cursor:pointer;font-size:1.2em;color:#888;margin-left:8px;'>🗑️</button>
             </div>
           `,
             )
@@ -423,8 +453,23 @@
         }
         modal.style.display = 'flex'
         document.querySelectorAll('.delete-edit-request-btn').forEach((btn) => {
-          btn.onclick = function () {
+          btn.onclick = function (e) {
+            e.stopPropagation()
             handleDeleteEditRequest(btn.dataset.id, fetchMyEditRequests)
+          }
+        })
+        // Mark as read on click
+        document.querySelectorAll('.my-edit-request-item').forEach((item) => {
+          item.onclick = function () {
+            const id = item.getAttribute('data-id')
+            fetch(`/api/edit_request/${id}/mark_read/`, {
+              method: 'POST',
+              headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            }).then(() => {
+              // Refresh the modal and notification dot
+              fetchMyEditRequests(true)
+              checkEditRequestNotifications()
+            })
           }
         })
       }
@@ -481,6 +526,40 @@
           deleteModal.style.display = 'none'
         }
       }
+
+      // --- Notification polling logic ---
+      function checkEditRequestNotifications() {
+        // Check incoming edit requests (for board owners)
+        const incomingDot = document.getElementById('incomingEditRequestsDot')
+        fetch('/api/edit_requests/')
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.requests && data.requests.length > 0) {
+              if (incomingDot) incomingDot.style.display = 'inline-block'
+            } else {
+              if (incomingDot) incomingDot.style.display = 'none'
+            }
+          })
+        // Check my edit requests (for all users)
+        const myDot = document.getElementById('myEditRequestsDot')
+        fetch('/api/my_edit_requests/')
+          .then((response) => response.json())
+          .then((data) => {
+            // Show dot if any request is not 'pending' and unread
+            if (
+              data.requests &&
+              data.requests.some(
+                (r) => r.status !== 'pending' && !r.read_by_sender,
+              )
+            ) {
+              if (myDot) myDot.style.display = 'inline-block'
+            } else {
+              if (myDot) myDot.style.display = 'none'
+            }
+          })
+      }
+      setInterval(checkEditRequestNotifications, 10000) // Poll every 10 seconds
+      window.onload = checkEditRequestNotifications
     </script>
   </body>
 </html>

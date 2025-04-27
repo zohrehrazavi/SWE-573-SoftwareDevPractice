@@ -64,6 +64,7 @@ class EditRequest(models.Model):
     message = models.TextField(blank=True)
     status = models.CharField(max_length=16, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('denied', 'Denied')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    read_by_sender = models.BooleanField(default=False)
 
     def __str__(self):
         return f"EditRequest from {self.sender.username} for {self.board.name} ({self.status})"

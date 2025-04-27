@@ -183,6 +183,7 @@ def my_edit_requests(request):
             'board_name': r.board.name,
             'status': r.status,
             'created_at': r.created_at.strftime('%Y-%m-%d %H:%M'),
+            'read_by_sender': r.read_by_sender,
         }
         for r in requests
     ]
@@ -197,5 +198,16 @@ def delete_edit_request(request, request_id):
             return JsonResponse({'status': 'error', 'message': 'Permission denied.'}, status=403)
         req.delete()
         return JsonResponse({'status': 'deleted'})
+    except EditRequest.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Request not found.'}, status=404)
+
+@login_required
+@require_http_methods(["POST"])
+def mark_edit_request_read(request, request_id):
+    try:
+        req = EditRequest.objects.get(id=request_id, sender=request.user)
+        req.read_by_sender = True
+        req.save()
+        return JsonResponse({'status': 'ok'})
     except EditRequest.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Request not found.'}, status=404)
