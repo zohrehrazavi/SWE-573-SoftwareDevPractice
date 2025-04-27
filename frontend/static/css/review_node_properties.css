@@ -1,0 +1,114 @@
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f5f7fa;
+  color: #222;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+.review-properties-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.property-card {
+  border: 1.5px solid #e0e7ef;
+  padding: 18px 20px 14px 20px;
+  margin-bottom: 18px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.property-label {
+  font-size: 1.08rem;
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.property-input {
+  background-color: #f7f7f7;
+  border: 1px solid #e0e7ef;
+  border-radius: 8px;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 4px;
+}
+.property-input:focus {
+  background: #fff;
+  border-color: #57aaff;
+  outline: none;
+}
+.button-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+.button-row button {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  padding: 8px 18px;
+  transition: background 0.2s, color 0.2s;
+}
+.approve-btn {
+  background-color: #d1f4d6;
+  color: #217a2c;
+}
+.approve-btn:hover {
+  background-color: #b6e6be;
+}
+.edit-btn {
+  background-color: #f7f0d1;
+  color: #8a6d1b;
+}
+.edit-btn:hover {
+  background-color: #f3e7a6;
+}
+.remove-btn {
+  background-color: #f4d1d1;
+  color: #a12a2a;
+}
+.remove-btn:hover {
+  background-color: #eeb3b3;
+}
+.primary-btn, .wide-btn {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 12px 0;
+  width: 100%;
+  border-radius: 10px;
+  background: #95c11f;
+  color: #fff;
+  border: none;
+  margin-top: 18px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.primary-btn:hover {
+  background: #7ea61a;
+}
+.add-manual-link {
+  display: inline-block;
+  margin-top: 18px;
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.add-manual-link:hover {
+  color: #174ea6;
+} 

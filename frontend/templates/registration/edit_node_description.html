@@ -1,0 +1,22 @@
+{% extends "registration/base.html" %} {% load static %} {% block content %}
+<div class="edit-desc-container">
+  <div class="edit-desc-card">
+    <h2>Edit Description for {{ node.name }}</h2>
+    <form method="post" class="edit-desc-form">
+      {% csrf_token %}
+      <textarea
+        name="description"
+        rows="5"
+        class="desc-textarea"
+        style="width: 100%; margin-bottom: 16px;"
+      >
+{{ node.description }}</textarea
+      >
+      <br />
+      <button type="submit" class="primary-btn">Save</button>
+      <a href="{% url 'node_detail' node.id %}" class="back-btn">Cancel</a>
+    </form>
+  </div>
+</div>
+<link rel="stylesheet" href="{% static 'css/edit_node_description.css' %}" />
+{% endblock %}

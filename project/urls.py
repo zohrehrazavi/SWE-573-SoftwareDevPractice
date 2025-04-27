@@ -20,7 +20,7 @@ from backend.user_auth.views import (
     home_view, register, create_board, board_detail,
     create_node, node_detail, fetch_node_properties,
     add_manual_property, review_node_properties, approve_node_properties,
-    delete_node, custom_logout, delete_board, edit_board
+    delete_node, custom_logout, delete_board, edit_board, edit_node_description
 )
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
@@ -43,6 +43,7 @@ urlpatterns = [
     path("node/<int:node_id>/review_properties/", review_node_properties, name="review_node_properties"),
     path("node/<int:node_id>/approve_properties/", approve_node_properties, name="approve_node_properties"),
     path("node/<int:node_id>/delete/", delete_node, name="delete_node"),
+    path("node/<int:node_id>/edit_description/", edit_node_description, name="edit_node_description"),
     path('', lambda request: redirect('home'), name='root'),
 ]
 

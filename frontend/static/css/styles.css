@@ -14,4 +14,56 @@
   background: #f3f4f6;
   color: #e11d48;
 }
-/* Remove envelope-specific styles if any */ 
+/* Remove envelope-specific styles if any */
+.property-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.btn-group {
+  margin-top: 10px;
+}
+.btn {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-approve {
+  background-color: #b2f2bb;
+  border: 1px solid #2f9e44;
+}
+.btn-edit {
+  background-color: #d0ebff;
+  border: 1px solid #1c7ed6;
+}
+.btn-remove {
+  background-color: #ffc9c9;
+  border: 1px solid #f03e3e;
+}
+.button-row {
+  margin-top: 10px;
+}
+.button-row button {
+  margin-right: 8px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.approve-btn {
+  background-color: #d1f4d6;
+}
+.edit-btn {
+  background-color: #f7f0d1;
+}
+.remove-btn {
+  background-color: #f4d1d1;
+}
+input[readonly] {
+  background-color: #f7f7f7;
+  border: none;
+  width: 70%;
+  padding: 6px;
+  margin-right: 10px;
+} 

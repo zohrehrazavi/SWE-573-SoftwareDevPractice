@@ -23,6 +23,7 @@ class BoardGraphAPIView(APIView):
             graph_nodes.append({
                 "id": str(node.id),
                 "name": node.name,
+                "description": node.description,
                 "type": "main",
                 "properties": node.properties or {},
                 "created_by": node.created_by_id

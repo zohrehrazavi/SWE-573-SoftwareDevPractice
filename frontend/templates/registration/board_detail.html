@@ -3,232 +3,8 @@
   <head>
     <title>{{ board.name }}</title>
     <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Inter', Arial, sans-serif;
-        background: #f7f9fb;
-      }
-      .main-container {
-        max-width: 900px;
-        margin: 32px auto;
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 4px 24px #0001;
-        padding: 32px 36px 36px 36px;
-      }
-      .board-header {
-        margin-bottom: 18px;
-      }
-      .board-title {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #222;
-        margin-bottom: 4px;
-      }
-      .board-meta {
-        color: #6b7280;
-        font-size: 1rem;
-        margin-bottom: 10px;
-      }
-      .board-tags {
-        margin: 8px 0 18px 0;
-      }
-      .tag-pill {
-        display: inline-block;
-        background: #e0e7ef;
-        color: #333;
-        border-radius: 12px;
-        padding: 2px 10px;
-        font-size: 0.9em;
-        margin-right: 4px;
-        margin-bottom: 2px;
-      }
-      .edit-board-btn {
-        background: #f3f4f6;
-        color: #374151;
-        border-radius: 8px;
-        padding: 7px 20px;
-        text-decoration: none;
-        border: 1px solid #d1d5db;
-        font-size: 1em;
-        font-weight: 500;
-        transition: background 0.2s;
-        margin-bottom: 18px;
-        display: inline-block;
-      }
-      .edit-board-btn:hover {
-        background: #e0e7ef;
-      }
-      .accordion {
-        background: #f3f4f6;
-        border-radius: 12px;
-        margin-bottom: 18px;
-        box-shadow: 0 2px 8px #0001;
-      }
-      .accordion-header {
-        padding: 14px 18px;
-        font-size: 1.1em;
-        font-weight: 600;
-        color: #374151;
-        cursor: pointer;
-        border-radius: 12px 12px 0 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .accordion-header .arrow {
-        font-size: 1.2em;
-        transition: transform 0.2s;
-      }
-      .accordion-header.collapsed .arrow {
-        transform: rotate(-90deg);
-      }
-      .accordion-content {
-        display: none;
-        padding: 0 18px 18px 18px;
-      }
-      .accordion-content.open {
-        display: block;
-      }
-      .node-card {
-        background: #f7f9fb;
-        border-radius: 10px;
-        padding: 12px 18px;
-        margin-bottom: 10px;
-        box-shadow: 0 1px 4px #0001;
-        font-size: 1.05em;
-      }
-      .node-card a {
-        color: #2563eb;
-        font-weight: 600;
-        text-decoration: none;
-      }
-      .node-card a:hover {
-        text-decoration: underline;
-      }
-      .add-node-btn,
-      .back-home-btn {
-        display: inline-block;
-        background: #60a5fa;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 8px 22px;
-        font-size: 1em;
-        font-weight: 500;
-        margin: 10px 10px 0 0;
-        text-decoration: none;
-        transition: background 0.2s;
-        box-shadow: 0 2px 8px #0001;
-      }
-      .add-node-btn:hover,
-      .back-home-btn:hover {
-        background: #2563eb;
-      }
-      .controls {
-        margin: 28px 0 18px 0;
-      }
-      #cy {
-        width: 100%;
-        height: 500px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin: 20px 0;
-        background-color: #f8f9fa;
-      }
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-      }
-      .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
-        max-height: 70vh;
-        overflow-y: auto;
-        border-radius: 4px;
-      }
-      .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .close:hover {
-        color: black;
-      }
-      .property-list {
-        list-style-type: none;
-        padding: 0;
-      }
-      .property-item {
-        margin: 10px 0;
-        padding: 10px;
-        background-color: #f5f5f5;
-        border-radius: 4px;
-      }
-      .mode-button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #4caf50;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        margin-right: 10px;
-        cursor: pointer;
-        border: 3px solid transparent;
-        transition: all 0.2s ease;
-      }
-      .mode-button.active {
-        border-color: #fff;
-        box-shadow: 0 0 0 3px #4caf50;
-      }
-      .delete-button {
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #f44336;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        margin-right: 10px;
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
-      .delete-button.active {
-        cursor: pointer;
-        opacity: 1;
-        border-color: #fff;
-        box-shadow: 0 0 0 3px #f44336;
-      }
-      .ask-edit-btn {
-        background: #fbbf24;
-        color: #222;
-        border: none;
-        border-radius: 8px;
-        padding: 8px 22px;
-        font-size: 1em;
-        font-weight: 500;
-        margin: 10px 10px 0 0;
-        text-decoration: none;
-        transition: background 0.2s;
-        box-shadow: 0 2px 8px #0001;
-        cursor: pointer;
-      }
-      .ask-edit-btn:hover {
-        background: #f59e42;
-      }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/board_detail.css' %}" />
   </head>
   <body>
     <div class="main-container">
@@ -297,7 +73,7 @@
         + Add New Node
       </a>
       {% endif %}
-      <a href="{% url 'home' %}" class="back-home-btn">&#8592; Back to Home</a>
+      <a href="{% url 'home' %}" class="back-btn">← Back to Home</a>
       <div class="controls">
         <div class="mode-button" id="viewMode">View Properties</div>
         {% if is_board_editor %}
@@ -465,6 +241,34 @@
             .then((data) => {
               const elements = []
 
+              // Assign user colors
+              const userColorMap = {}
+              const colorPalette = [
+                '#8e44ad', // purple
+                '#16a085', // teal
+                '#e67e22', // orange
+                '#e74c3c', // red
+                '#2ecc71', // green
+                '#f1c40f', // yellow
+                '#34495e', // dark blue
+                '#ff69b4', // pink
+                '#00b894', // light green
+                '#fdcb6e', // light orange
+              ]
+              const boardOwnerId = parseInt('{{ board.owner.id }}')
+              userColorMap[boardOwnerId] = '#3498db' // blue for owner
+              let colorIdx = 0
+
+              // First pass: assign colors to users
+              data.nodes.forEach((node) => {
+                const userId = node.created_by
+                if (!(userId in userColorMap)) {
+                  userColorMap[userId] =
+                    colorPalette[colorIdx % colorPalette.length]
+                  colorIdx++
+                }
+              })
+
               // Add nodes
               data.nodes.forEach((node) => {
                 elements.push({
@@ -472,8 +276,10 @@
                   data: {
                     id: node.id.toString(),
                     label: node.name,
+                    description: node.description,
                     properties: node.properties || {},
                     created_by: node.created_by,
+                    user_color: userColorMap[node.created_by],
                   },
                 })
               })
@@ -504,7 +310,7 @@
                   {
                     selector: 'node',
                     style: {
-                      'background-color': '#3498db',
+                      'background-color': 'data(user_color)',
                       'border-color': '#2980b9',
                       'border-width': '2px',
                       label: 'data(label)',
@@ -512,7 +318,7 @@
                       'text-halign': 'center',
                       'font-size': '10px',
                       color: '#fff',
-                      'text-outline-color': '#3498db',
+                      'text-outline-color': 'data(user_color)',
                       'text-outline-width': '2px',
                       width: 'label',
                       height: 'label',
@@ -587,7 +393,10 @@
 
               // Overlay delete icon for nodes/edges the user can delete
               const currentUserId = parseInt('{{ user.id }}')
-              const boardOwnerId = parseInt('{{ board.owner.id }}')
+
+              // Find the #cy element
+              const cyElement = document.getElementById('cy')
+              cyElement.style.position = 'relative' // Ensure #cy is relative
 
               // Container for overlays
               let overlayContainer = document.getElementById('cy-overlays')
@@ -601,10 +410,8 @@
                 overlayContainer.style.height = '100%'
                 overlayContainer.style.pointerEvents = 'none'
                 overlayContainer.style.zIndex = '1000'
-                // Append as sibling to #cy, not as child
-                const cyParent = document.getElementById('cy').parentNode
-                cyParent.style.position = 'relative'
-                cyParent.appendChild(overlayContainer)
+                // Append as child to #cy
+                cyElement.appendChild(overlayContainer)
               }
 
               function clearOverlays() {
@@ -869,6 +676,17 @@
                   )
                   propertiesDiv.innerHTML = ''
 
+                  // Add description if available
+                  if (nodeData.description) {
+                    const descDiv = document.createElement('div')
+                    descDiv.className = 'node-description-modal'
+                    descDiv.textContent = nodeData.description
+                    descDiv.style.marginBottom = '16px'
+                    descDiv.style.fontStyle = 'italic'
+                    descDiv.style.color = '#444'
+                    propertiesDiv.appendChild(descDiv)
+                  }
+
                   if (
                     nodeData.properties &&
                     Object.keys(nodeData.properties).length > 0
@@ -882,7 +700,7 @@
                       propertiesDiv.appendChild(propertyItem)
                     }
                   } else {
-                    propertiesDiv.innerHTML = '<p>No properties available.</p>'
+                    propertiesDiv.innerHTML += '<p>No properties available.</p>'
                   }
 
                   modal.style.display = 'block'
@@ -933,7 +751,9 @@
 
         if (createNodeLink) {
           createNodeLink.addEventListener('click', function () {
-            setTimeout(loadGraph, 1000) // Reload after node creation
+            setTimeout(function () {
+              window.location.reload() // Reload the page to update both graph and node list
+            }, 1000)
           })
         }
 

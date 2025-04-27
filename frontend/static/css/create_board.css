@@ -1,0 +1,153 @@
+/* Styles for the Create Board page */
+:root {
+  --primary-color: #95c11f;
+  --secondary-color: #2c3e50;
+  --background-color: #f5f7fa;
+  --card-background: #ffffff;
+  --text-color: #333333;
+  --border-radius: 10px;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+.create-board-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e9ecef;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  background-color: var(--background-color);
+}
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+.tag-input {
+  margin-top: 8px;
+}
+.help-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 30px;
+}
+.submit-btn {
+  padding: 10px 24px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: all 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.submit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.back-link {
+  padding: 12px 24px;
+  background-color: #f8f9fa;
+  color: var(--secondary-color);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  border: 1px solid #dee2e6;
+  transition: all 0.2s;
+}
+.back-link:hover {
+  background-color: #e9ecef;
+}
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+#tags-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+#tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-top: 0.5em;
+}
+.tag-chip {
+  background: #e0e7ef;
+  color: #333;
+  border-radius: 16px;
+  padding: 0.2em 0.8em 0.2em 0.8em;
+  display: flex;
+  align-items: center;
+  font-size: 0.95em;
+}
+.tag-chip .remove-tag {
+  margin-left: 0.5em;
+  cursor: pointer;
+  color: #888;
+  font-weight: bold;
+}
+#tags-input {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5em;
+  font-size: 1em;
+  transition: background 0.2s;
+}
+#tags-input.disabled-tag-input {
+  background: #f0f0f0;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.back-btn {
+  padding: 10px 24px;
+  background-color: #57aaff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  border: none;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.back-btn:hover {
+  background-color: #3996e6;
+  color: #fff;
+}
+.wide-btn {
+  width: 100%;
+  display: block;
+  margin: 0 0 16px 0;
+} 

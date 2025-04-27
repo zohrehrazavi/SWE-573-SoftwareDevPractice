@@ -1,4 +1,4 @@
-{% extends "registration/base.html" %} {% block content %}
+{% extends "registration/base.html" %} {% load static %} {% block content %}
 <div class="property-editor">
   <h2>Edit Properties for Node: {{ node.name }}</h2>
 
@@ -141,77 +141,5 @@
   </form>
 </div>
 
-<style>
-  .property-editor {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  .property-section {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    padding: 20px;
-  }
-  .property-section h3 {
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eee;
-  }
-  .property-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
-  }
-  .form-field {
-    margin-bottom: 15px;
-  }
-  .form-field label {
-    display: block;
-    margin-bottom: 5px;
-    color: #495057;
-    font-weight: 500;
-  }
-  .form-field input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  .form-field input:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
-  .form-actions {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-  }
-  .save-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  .save-button:hover {
-    background-color: #218838;
-  }
-  .back-link {
-    color: #6c757d;
-    text-decoration: none;
-  }
-  .back-link:hover {
-    color: #5a6268;
-    text-decoration: underline;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/add_property.css' %}" />
 {% endblock %}

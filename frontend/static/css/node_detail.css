@@ -1,0 +1,170 @@
+/* Styles for the Node Detail page */
+:root {
+  --primary-color: #95c11f;
+  --secondary-color: #2c3e50;
+  --background-color: #f5f7fa;
+  --card-background: #ffffff;
+  --text-color: #333333;
+  --border-radius: 10px;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+.node-detail-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+.node-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 16px;
+}
+.property-list {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 24px;
+}
+.property-item {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+.edit-btn {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+.edit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.back-link {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  color: var(--secondary-color);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  border: 1px solid #dee2e6;
+  transition: all 0.2s;
+}
+.back-link:hover {
+  background-color: #e9ecef;
+}
+
+/* Button Styles for Node Detail Actions */
+.primary-btn {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+.primary-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.secondary-btn {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  color: var(--secondary-color);
+  border: 1px solid #dee2e6;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+.secondary-btn:hover {
+  background-color: #e9ecef;
+}
+.danger-btn {
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+.danger-btn:hover {
+  background-color: #c0392b;
+}
+.back-btn {
+  padding: 10px 24px;
+  background-color: #57aaff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  border: none;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.back-btn:hover {
+  background-color: #3996e6;
+  color: #fff;
+}
+
+.description-card {
+  background: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 24px 28px;
+  margin-bottom: 8px;
+  border: 2px solid #e0e7ef;
+  max-width: 100%;
+}
+.description-text {
+  font-size: 1.15rem;
+  color: #222;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.primary-btn, .secondary-btn, .danger-btn, .back-btn {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.1rem;
+}
+.edit-desc-link {
+  text-align: right;
+  margin-top: 8px;
+}
+.edit-desc-link a {
+  color: #2563eb;
+  font-size: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.edit-desc-link a:hover {
+  color: #174ea6;
+} 

@@ -1,0 +1,84 @@
+/* Styles for the Create Node page */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+.create-node-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.create-node-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 24px;
+}
+.create-node-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.create-node-form label {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 6px;
+}
+.create-node-form input,
+.create-node-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e7ef;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f8fafc;
+  margin-bottom: 8px;
+  font-family: inherit;
+}
+.create-node-form input:focus,
+.create-node-form textarea:focus {
+  outline: none;
+  border-color: #57aaff;
+  background: #fff;
+}
+.primary-btn {
+  padding: 10px 24px;
+  background-color: #95c11f;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin-right: 10px;
+}
+.primary-btn:hover {
+  background-color: #7ea61a;
+}
+.back-btn {
+  padding: 10px 24px;
+  background-color: #57aaff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  border: none;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.back-btn:hover {
+  background-color: #3996e6;
+  color: #fff;
+} 

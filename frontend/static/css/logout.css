@@ -1,0 +1,48 @@
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f5f7fa;
+  color: #222;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+.logout-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+.logout-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 48px 36px 36px 36px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+.logout-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.logout-message {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 32px;
+}
+.login-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  background-color: #57aaff;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+.login-btn:hover {
+  background-color: #3996e6;
+} 

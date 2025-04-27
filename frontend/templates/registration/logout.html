@@ -1,7 +1,10 @@
-{% extends 'registration/base.html' %} {% block content %}
+{% extends 'registration/base.html' %} {% load static %} {% block content %}
 <div class="logout-container">
-  <h2>You have been successfully logged out</h2>
-  <p>Thank you for using our platform</p>
-  <a href="{% url 'login' %}" class="login-link">Log in again</a>
+  <div class="logout-card">
+    <h2 class="logout-title">You have been successfully logged out</h2>
+    <p class="logout-message">Thank you for using our platform</p>
+    <a href="{% url 'login' %}" class="login-btn">Log in again</a>
+  </div>
 </div>
+<link rel="stylesheet" href="{% static 'css/logout.css' %}" />
 {% endblock %}

@@ -12,6 +12,7 @@ from .forms import ManualPropertyForm
 from .utils import map_properties_to_form_initial, FORM_LABEL_TO_PROPERTY_LABEL
 from django.contrib.auth import logout
 from django.http import HttpResponseForbidden
+from django.urls import reverse
 
 def custom_logout_view(request):
     logout(request)
@@ -148,7 +149,8 @@ def home_view(request):
         boards = Board.objects.all()
     else:
         boards = Board.objects.filter(owner=request.user)
-    return render(request, 'registration/home.html', {'boards': boards, 'show': show})
+    is_board_owner = Board.objects.filter(owner=request.user).exists()
+    return render(request, 'registration/home.html', {'boards': boards, 'show': show, 'is_board_owner': is_board_owner})
 
 def register(request):
     if request.method == 'POST':
@@ -253,3 +255,12 @@ def delete_board(request, board_id):
         board.delete()
         return redirect('home')
     return redirect('home')
+
+def edit_node_description(request, node_id):
+    node = Node.objects.get(id=node_id)
+    if request.method == 'POST':
+        new_desc = request.POST.get('description', '')
+        node.description = new_desc
+        node.save()
+        return redirect(reverse('node_detail', args=[node.id]))
+    return render(request, 'registration/edit_node_description.html', {'node': node})

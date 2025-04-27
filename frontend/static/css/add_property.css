@@ -1,0 +1,101 @@
+/* Styles for the Add Property page */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f5f7fa;
+  color: #222;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+.property-editor {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.property-section {
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 24px;
+  padding: 24px 24px 18px 24px;
+  border: 1.5px solid #e0e7ef;
+}
+.property-section h3 {
+  color: #222;
+  margin-top: 0;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.property-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+}
+.form-field {
+  margin-bottom: 0;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 1rem;
+}
+.form-field input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e7ef;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f8fafc;
+  font-family: inherit;
+}
+.form-field input:focus {
+  border-color: #57aaff;
+  outline: none;
+  background: #fff;
+}
+.form-actions {
+  margin-top: 28px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.save-button {
+  background-color: #95c11f;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s;
+}
+.save-button:hover {
+  background-color: #7ea61a;
+}
+.back-link {
+  color: #2563eb;
+  text-decoration: underline;
+  font-size: 1.1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.back-link:hover {
+  color: #174ea6;
+  text-decoration: underline;
+} 
