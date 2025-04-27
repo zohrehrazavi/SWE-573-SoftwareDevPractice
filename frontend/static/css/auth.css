@@ -105,3 +105,21 @@ body {
   height: 16px;
   accent-color: #95c11f;
 }
+
+.auth-welcome {
+  margin-bottom: 28px;
+  text-align: center;
+}
+.auth-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #222;
+}
+.auth-subtitle {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-bottom: 0;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
