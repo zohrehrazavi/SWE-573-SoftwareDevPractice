@@ -28,6 +28,7 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
     "swe-573-softwaredevpractice-production.up.railway.app",
+    "connectthedots.up.railway.app",
     "localhost",
     "127.0.0.1",
 ]
