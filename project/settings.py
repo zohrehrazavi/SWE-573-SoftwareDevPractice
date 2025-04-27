@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://swe-573-softwaredevpractice-production.up.railway.app"
+    "https://connectthedots.up.railway.app",
 ]
 
 
