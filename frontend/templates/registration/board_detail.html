@@ -10,6 +10,40 @@
     <div class="main-container">
       <div class="board-header">
         <div class="board-title">{{ board.name }}</div>
+        <div class="board-description-container">
+          <div
+            class="board-description {% if board.owner == user %}editable{% endif %}"
+            id="board-description"
+            data-description="{{ board.description|default:'' }}"
+          >
+            {% if board.description %}
+            <div class="description-content">{{ board.description }}</div>
+            {% elif board.owner == user %}
+            <span class="placeholder">Add a description...</span>
+            {% else %}
+            <span class="placeholder">No description available</span>
+            {% endif %}
+          </div>
+          {% if board.owner == user %}
+          <button class="edit-description-btn" id="edit-description-btn">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+              ></path>
+              <path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+              ></path>
+            </svg>
+          </button>
+          {% endif %}
+        </div>
         <div class="board-meta">Created at: {{ board.created_at }}</div>
         {% if board.board_tags %}
         <div class="board-tags">
@@ -176,6 +210,88 @@
       document.addEventListener('DOMContentLoaded', function () {
         const boardId = '{{ board.id }}'
         const csrfToken = '{{ csrf_token }}'
+
+        // Description editing functionality
+        const descriptionContainer = document.getElementById(
+          'board-description',
+        )
+        const editDescriptionBtn = document.getElementById(
+          'edit-description-btn',
+        )
+
+        if (editDescriptionBtn) {
+          editDescriptionBtn.addEventListener('click', function () {
+            // Get the description from the data attribute
+            const currentText = descriptionContainer.dataset.description || ''
+
+            const textarea = document.createElement('textarea')
+            textarea.value = currentText
+            textarea.maxLength = 500
+            textarea.className = 'description-edit-textarea'
+            textarea.placeholder =
+              'Enter board description (max 500 characters)'
+
+            const saveBtn = document.createElement('button')
+            saveBtn.textContent = 'Save'
+            saveBtn.className = 'save-description-btn'
+
+            const cancelBtn = document.createElement('button')
+            cancelBtn.textContent = 'Cancel'
+            cancelBtn.className = 'cancel-description-btn'
+
+            const buttonContainer = document.createElement('div')
+            buttonContainer.className = 'description-edit-buttons'
+            buttonContainer.appendChild(saveBtn)
+            buttonContainer.appendChild(cancelBtn)
+
+            const originalContent = descriptionContainer.innerHTML
+            descriptionContainer.innerHTML = ''
+            descriptionContainer.appendChild(textarea)
+            descriptionContainer.appendChild(buttonContainer)
+
+            textarea.focus()
+
+            saveBtn.addEventListener('click', function () {
+              const newDescription = textarea.value.trim()
+              fetch(`/auth/api/boards/${boardId}/update_description/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'X-CSRFToken': csrfToken,
+                },
+                body: `description=${encodeURIComponent(newDescription)}`,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.success) {
+                    descriptionContainer.dataset.description = newDescription
+                    if (newDescription) {
+                      descriptionContainer.innerHTML =
+                        '<div class="description-content">' +
+                        newDescription +
+                        '</div>'
+                    } else {
+                      descriptionContainer.innerHTML =
+                        '<span class="placeholder">Add a description...</span>'
+                    }
+                  } else {
+                    alert(data.error || 'Failed to update description')
+                    descriptionContainer.innerHTML = originalContent
+                  }
+                })
+                .catch((error) => {
+                  console.error('Error:', error)
+                  alert('Failed to update description')
+                  descriptionContainer.innerHTML = originalContent
+                })
+            })
+
+            cancelBtn.addEventListener('click', function () {
+              descriptionContainer.innerHTML = originalContent
+            })
+          })
+        }
+
         let selectedNode = null
         let selectedEdge = null
         let isConnectMode = false

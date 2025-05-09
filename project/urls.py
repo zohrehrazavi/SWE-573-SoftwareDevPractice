@@ -28,6 +28,7 @@ from django.shortcuts import redirect
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("backend.nodes.urls")),
+    path("auth/", include("backend.user_auth.urls")),
     path("auth/register/", register, name="register"),
     path("home/", home_view, name="home"),
     path("auth/login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),

@@ -150,4 +150,19 @@ body {
   width: 100%;
   display: block;
   margin: 0 0 16px 0;
+}
+.board-description {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1em;
+  resize: vertical;
+  min-height: 100px;
+  margin-bottom: 4px;
+}
+.board-description:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 } 

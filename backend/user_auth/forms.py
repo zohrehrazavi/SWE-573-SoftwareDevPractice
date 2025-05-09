@@ -34,9 +34,19 @@ class BoardForm(forms.ModelForm):
         })
     )
 
+    description = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Enter board description (max 500 characters)',
+            'class': 'board-description',
+            'maxlength': '500',
+            'rows': '4'
+        })
+    )
+
     class Meta:
         model = Board
-        fields = ['name', 'board_tags']
+        fields = ['name', 'description', 'board_tags']
 
     def clean_board_tags(self):
         tags_str = self.cleaned_data.get('board_tags', '').strip()

@@ -17,6 +17,7 @@ def validate_tags(value):
 
 class Board(models.Model):
     name = models.CharField(max_length=255)
+    description = models.TextField(max_length=500, blank=True, null=True)  # New field
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     board_tags = models.JSONField(default=list, validators=[validate_tags], blank=True)

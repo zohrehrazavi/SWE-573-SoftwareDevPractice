@@ -11,7 +11,7 @@ from django.contrib import messages
 from .forms import ManualPropertyForm
 from .utils import map_properties_to_form_initial, FORM_LABEL_TO_PROPERTY_LABEL
 from django.contrib.auth import logout
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.urls import reverse
 from backend.nodes.models import ContributionMessage
 from django.contrib.auth.models import User
@@ -280,3 +280,23 @@ def edit_node_description(request, node_id):
         node.save()
         return redirect(reverse('node_detail', args=[node.id]))
     return render(request, 'registration/edit_node_description.html', {'node': node})
+
+@login_required
+def update_board_description(request, board_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid method'})
+    
+    board = get_object_or_404(Board, id=board_id)
+    
+    # Only allow board owner to update description
+    if board.owner != request.user:
+        return JsonResponse({'success': False, 'error': 'Only board owner can update the description'})
+    
+    description = request.POST.get('description', '').strip()
+    if len(description) > 500:
+        return JsonResponse({'success': False, 'error': 'Description too long'})
+    
+    board.description = description
+    board.save()
+    
+    return JsonResponse({'success': True})
