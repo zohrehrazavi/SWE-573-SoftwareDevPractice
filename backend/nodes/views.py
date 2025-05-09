@@ -248,3 +248,37 @@ def delete_message(request, message_id):
         return JsonResponse({"error": "Permission denied"}, status=403)
     msg.delete()
     return JsonResponse({"success": True})
+
+@login_required
+def update_edge_label(request):
+    if request.method == "POST":
+        from_id = request.POST.get("from")
+        to_id = request.POST.get("to")
+        board_id = request.POST.get("board")
+        new_label = request.POST.get("label", "").strip()
+
+        if not new_label:
+            return JsonResponse({"status": "error", "message": "Edge label is required"}, status=400)
+        
+        if len(new_label) > 50:
+            return JsonResponse({"status": "error", "message": "Edge label is too long (maximum 50 characters)"}, status=400)
+
+        try:
+            edge = ManualEdge.objects.get(
+                board_id=board_id,
+                from_node_id=from_id,
+                to_node_id=to_id
+            )
+            
+            # Check if user has permission to edit this edge
+            if edge.created_by != request.user and edge.board.owner != request.user:
+                return JsonResponse({"status": "error", "message": "You don't have permission to edit this edge"}, status=403)
+            
+            edge.label = new_label
+            edge.save()
+            
+            return JsonResponse({"status": "ok", "message": "Edge label updated successfully"})
+        except ManualEdge.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Edge not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=400)

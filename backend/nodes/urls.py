@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import NodeListCreateView, save_manual_edge, delete_manual_edge, request_edit_access, get_edit_requests, edit_request_action, my_edit_requests, delete_edit_request, mark_edit_request_read, post_message, edit_message, delete_message
+from .views import NodeListCreateView, save_manual_edge, delete_manual_edge, request_edit_access, get_edit_requests, edit_request_action, my_edit_requests, delete_edit_request, mark_edit_request_read, post_message, edit_message, delete_message, update_edge_label
 from .graph_views import BoardGraphAPIView
 
 urlpatterns = [
@@ -7,6 +7,7 @@ urlpatterns = [
     path('board/<int:board_id>/graph/', BoardGraphAPIView.as_view(), name='board-graph'),
     path("edge/add/", save_manual_edge, name="save_manual_edge"),
     path("edge/delete/", delete_manual_edge, name="delete_manual_edge"),
+    path("edge/update/", update_edge_label, name="update_edge_label"),
     path('board/<int:board_id>/request_edit/', request_edit_access, name='request-edit-access'),
     path('edit_requests/', get_edit_requests, name='get-edit-requests'),
     path('edit_requests/<int:request_id>/action/', edit_request_action, name='edit-request-action'),

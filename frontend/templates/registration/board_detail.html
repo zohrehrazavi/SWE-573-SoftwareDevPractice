@@ -662,41 +662,69 @@
               }
 
               function addDeleteOverlayForEdge(edge) {
-                const srcPos = cy
-                  .getElementById(edge.data('source'))
-                  .renderedPosition()
-                const tgtPos = cy
-                  .getElementById(edge.data('target'))
-                  .renderedPosition()
-                const cyRect = document
-                  .getElementById('cy')
-                  .getBoundingClientRect()
-                const parentRect = overlayContainer.getBoundingClientRect()
-                const offsetX = cyRect.left - parentRect.left
-                const offsetY = cyRect.top - parentRect.top
-                const midX = (srcPos.x + tgtPos.x) / 2
-                const midY = (srcPos.y + tgtPos.y) / 2
+                const pos = edge.midpoint()
+                const renderedPos = {
+                  x: pos.x * cy.zoom() + cy.pan().x,
+                  y: pos.y * cy.zoom() + cy.pan().y,
+                }
+                const overlayContainer = document.getElementById('cy-overlays')
+
+                // Create container for edge buttons
+                const edgeButtonsContainer = document.createElement('div')
+                edgeButtonsContainer.style.position = 'absolute'
+                edgeButtonsContainer.style.left = renderedPos.x + 'px'
+                edgeButtonsContainer.style.top = renderedPos.y - 10 + 'px'
+                edgeButtonsContainer.style.display = 'flex'
+                edgeButtonsContainer.style.gap = '5px'
+                edgeButtonsContainer.style.transform = 'translate(-50%, -100%)'
+                edgeButtonsContainer.style.zIndex = '1001'
+
+                // Delete button
                 const xBtn = document.createElement('div')
-                xBtn.textContent = '×'
+                xBtn.className = 'edge-button delete-button'
+                xBtn.innerHTML = '×'
                 xBtn.title = 'Delete connection'
-                xBtn.style.position = 'absolute'
-                xBtn.style.left = midX + offsetX + 10 + 'px'
-                xBtn.style.top = midY + offsetY - 10 + 'px'
-                xBtn.style.width = '18px'
-                xBtn.style.height = '18px'
+                xBtn.style.width = '20px'
+                xBtn.style.height = '20px'
                 xBtn.style.background = '#fff'
-                xBtn.style.color = '#e11d48'
-                xBtn.style.border = '1px solid #e11d48'
+                xBtn.style.border = '1px solid #e74c3c'
                 xBtn.style.borderRadius = '50%'
-                xBtn.style.fontSize = '14px'
+                xBtn.style.color = '#e74c3c'
+                xBtn.style.fontSize = '16px'
                 xBtn.style.fontWeight = 'bold'
                 xBtn.style.textAlign = 'center'
                 xBtn.style.lineHeight = '18px'
                 xBtn.style.cursor = 'pointer'
                 xBtn.style.pointerEvents = 'auto'
-                xBtn.style.zIndex = '1001'
-                xBtn.onclick = function (e) {
+                xBtn.style.display = 'flex'
+                xBtn.style.alignItems = 'center'
+                xBtn.style.justifyContent = 'center'
+
+                // Edit button
+                const editBtn = document.createElement('div')
+                editBtn.className = 'edge-button edit-button'
+                editBtn.innerHTML = '✎'
+                editBtn.title = 'Edit label'
+                editBtn.style.width = '20px'
+                editBtn.style.height = '20px'
+                editBtn.style.background = '#fff'
+                editBtn.style.border = '1px solid #2563eb'
+                editBtn.style.borderRadius = '50%'
+                editBtn.style.color = '#2563eb'
+                editBtn.style.fontSize = '14px'
+                editBtn.style.fontWeight = 'bold'
+                editBtn.style.textAlign = 'center'
+                editBtn.style.lineHeight = '20px'
+                editBtn.style.cursor = 'pointer'
+                editBtn.style.pointerEvents = 'auto'
+                editBtn.style.display = 'flex'
+                editBtn.style.alignItems = 'center'
+                editBtn.style.justifyContent = 'center'
+
+                // Delete button click handler
+                xBtn.addEventListener('mousedown', function (e) {
                   e.stopPropagation()
+                  e.preventDefault()
                   if (confirm('Delete this connection?')) {
                     const sourceNode = edge.data('source')
                     const targetNode = edge.data('target')
@@ -706,7 +734,6 @@
                         'X-CSRFToken': csrfToken,
                         'Content-Type': 'application/x-www-form-urlencoded',
                       },
-                      credentials: 'include',
                       body: `from=${sourceNode}&to=${targetNode}&board=${boardId}`,
                     })
                       .then((response) => response.json())
@@ -719,12 +746,57 @@
                         }
                       })
                       .catch((error) => {
+                        console.error('Delete error:', error)
                         alert('Failed to delete connection: ' + error.message)
                       })
                   }
-                }
-                overlayContainer.appendChild(xBtn)
-                currentEdgeOverlay = xBtn
+                })
+
+                // Edit button click handler
+                editBtn.addEventListener('mousedown', function (e) {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  const currentLabel = edge.data('label') || ''
+                  const newLabel = prompt(
+                    'Enter new label for this connection:',
+                    currentLabel,
+                  )
+
+                  if (newLabel !== null && newLabel !== currentLabel) {
+                    const sourceNode = edge.data('source')
+                    const targetNode = edge.data('target')
+                    fetch('/api/edge/update/', {
+                      method: 'POST',
+                      headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                      },
+                      body: `from=${sourceNode}&to=${targetNode}&board=${boardId}&label=${encodeURIComponent(
+                        newLabel,
+                      )}`,
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        if (data.status === 'ok') {
+                          edge.data('label', newLabel)
+                          clearEdgeOverlay()
+                          // Reload the graph to ensure everything is in sync
+                          loadGraph()
+                        } else {
+                          alert(data.message || 'Failed to update label')
+                        }
+                      })
+                      .catch((error) => {
+                        console.error('Update error:', error)
+                        alert('Failed to update label: ' + error.message)
+                      })
+                  }
+                })
+
+                edgeButtonsContainer.appendChild(editBtn)
+                edgeButtonsContainer.appendChild(xBtn)
+                overlayContainer.appendChild(edgeButtonsContainer)
+                currentEdgeOverlay = edgeButtonsContainer
               }
 
               function addAllOverlays() {
@@ -766,7 +838,7 @@
                 const edge = evt.target
                 const data = edge.data()
                 if (
-                  currentUserId !== boardOwnerId &&
+                  currentUserId === boardOwnerId ||
                   data.created_by === currentUserId
                 ) {
                   addDeleteOverlayForEdge(edge)
