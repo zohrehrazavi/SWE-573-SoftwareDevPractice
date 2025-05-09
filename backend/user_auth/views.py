@@ -15,6 +15,7 @@ from django.http import HttpResponseForbidden
 from django.urls import reverse
 from backend.nodes.models import ContributionMessage
 from django.contrib.auth.models import User
+from django.db import models
 
 def custom_logout_view(request):
     logout(request)
@@ -138,7 +139,16 @@ def board_detail(request, board_id):
     nodes = board.nodes.all()  # all nodes related to this board
     is_board_editor = (board.owner == request.user) or board.editors.filter(user=request.user).exists()
     messages = ContributionMessage.objects.filter(board=board).order_by('created_at')
-    contributors = User.objects.filter(contributionmessage__board=board).distinct()
+    
+    # Get all contributors: board owner, editors, node creators, message authors
+    contributors = User.objects.filter(
+        models.Q(id=board.owner.id) |  # Board owner
+        models.Q(boardeditor__board=board) |  # Board editors
+        models.Q(created_nodes__board=board) |  # Node creators
+        models.Q(created_manual_edges__board=board) |  # Edge creators
+        models.Q(contributionmessage__board=board)  # Message authors
+    ).distinct()
+    
     return render(request, 'registration/board_detail.html', {
         'board': board,
         'nodes': nodes,
