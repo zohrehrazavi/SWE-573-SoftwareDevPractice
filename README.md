@@ -32,7 +32,7 @@ cd SWE-573-SoftwareDevPractice
 docker compose up --build
 ```
 
-This will build the containers and start the web and database services.
+This will build the containers and start the web and database services. Once running, the application will be available at `http://localhost:8001`.
 
 ### 4. Run Migrations
 
@@ -51,25 +51,18 @@ This ensures all database schema changes are detected and applied correctly.
 docker compose exec web python manage.py createsuperuser
 ```
 
-Use this to create an admin account to access Django's admin panel.
+Use this to create an admin account to access Django's admin interface at `/admin`.
 
 > **Note:** All backend commands should be run from the `web` service container.
-
----
-
-## Development URLs
-
-```
-Main App:       http://localhost:8001/
-Admin Panel:    http://localhost:8001/admin/
-Login Page:     http://localhost:8001/auth/login/
-```
 
 ---
 
 ## Repository Structure
 
 - `backend/` – Django project files and apps (`nodes`, `user_auth`)
+  - `nodes/` - Core functionality for boards, nodes, and edges
+  - `user_auth/` - User authentication and security features
+  - `tests/` - Comprehensive test suites
 - `docker/` – Docker configurations
 - `docker-compose.yml` – Docker service definitions
 - `requirements.txt` – Python dependencies
@@ -79,36 +72,77 @@ Login Page:     http://localhost:8001/auth/login/
 
 ## Testing
 
-The project includes comprehensive test suites for various functionalities:
+The project includes comprehensive test coverage across all major components:
 
-### Test Documentation
+### Test Structure
 
-- [General Test Documentation](backend/test/README.md) - Overview of test coverage for all modules
-- [Property Management Tests](backend/user_auth/tests/README.md) - Detailed documentation for property-related tests
+- `backend/test/README.md` - Detailed test documentation and guidelines
+- `backend/user_auth/tests/test_security.py` - Authentication and security tests
+- `backend/nodes/tests/test_board_node.py` - Board and node management tests
+- `backend/nodes/tests/test_api.py` - API endpoint tests
 
-### Test Coverage
+### Key Test Areas
 
-The test suites cover:
+1. **User Authentication & Security**
 
-- Model and API endpoint tests
-- View access and form validation
-- Manual property management
-- Wikidata integration
-- Property approval workflow
-- Property display and organization
+   - User registration and login
+   - Security questions
+   - Password reset functionality
+   - Case-insensitive answer validation
+
+2. **Board & Node Management**
+
+   - Board creation with unique names
+   - Node creation and validation
+   - Edge management
+   - Permission controls
+
+3. **API Endpoints**
+
+   - REST API functionality
+   - Response validation
+   - Authentication requirements
+
+4. **Integration Features**
+   - Wikidata integration
+   - Property management
+   - Edit request system
+   - Contribution messages
 
 ### Running Tests
 
 For local development (using SQLite):
 
 ```bash
-DJANGO_SETTINGS_MODULE=project.test_settings python manage.py test
+# Run all tests with verbose output
+python manage.py test backend.user_auth.tests backend.nodes.tests -v 2
+
+# Run specific test suites
+python manage.py test backend.user_auth.tests.test_security  # Security tests
+python manage.py test backend.nodes.tests.test_board_node    # Board/Node tests
+python manage.py test backend.nodes.tests.test_api           # API tests
 ```
 
 With Docker (using PostgreSQL):
 
 ```bash
+# Run all tests
 docker compose exec web python manage.py test
+
+# Run specific test suite with verbosity
+docker compose exec web python manage.py test backend.user_auth.tests -v 2
 ```
+
+### Test Coverage
+
+The test suite includes:
+
+- 32+ individual test cases
+- Coverage across all major components
+- Both unit and integration tests
+- API endpoint validation
+- Security feature verification
+
+For detailed test documentation and guidelines, see [Test Documentation](backend/test/README.md).
 
 ---

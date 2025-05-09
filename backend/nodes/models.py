@@ -16,7 +16,7 @@ def validate_tags(value):
             raise ValidationError('Empty tags are not allowed')
 
 class Board(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=500, blank=True, null=True)  # New field
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
