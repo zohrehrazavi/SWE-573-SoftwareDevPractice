@@ -111,6 +111,40 @@
       {% endif %}
     </div>
 
+    <div class="chat-sidebar">
+      <div class="chat-header">
+        <span>Number of Contributors: {{ contributors|length }}</span>
+        <div class="dropdown">
+          <button class="dropdown-toggle">Contributors Names ▼</button>
+          <ul class="dropdown-menu">
+            {% for user in contributors %}
+            <li>{{ user.username }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="chat-feed" id="chat-feed">
+        {% for message in messages %}
+        <div
+          class="chat-message {% if message.user == user %}own-message{% endif %}"
+          data-id="{{ message.id }}"
+        >
+          <span class="chat-user">{{ message.user.username }}</span>
+          <span class="chat-content">{{ message.content }}</span>
+          <span class="chat-time">{{ message.created_at|date:"H:i" }}</span>
+          {% if message.user == user %}
+          <button class="edit-btn">Edit</button>
+          <button class="delete-btn">Delete</button>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="chat-input">
+        <textarea id="chat-text" maxlength="500"></textarea>
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+
     <!-- Node Details Modal -->
     <div id="nodeModal" class="modal">
       <div class="modal-content">
@@ -119,6 +153,24 @@
         <div id="nodeProperties" class="property-list"></div>
       </div>
     </div>
+
+    <!-- Floating chat open button for mobile -->
+    <button id="open-chat-btn" class="open-chat-btn" style="display: none;">
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        />
+      </svg>
+    </button>
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
@@ -835,6 +887,128 @@
               })
           }
         }
+
+        document.getElementById('send-btn').onclick = function () {
+          const text = document.getElementById('chat-text').value.trim()
+          if (!text) return
+          fetch("{% url 'post_message' board.id %}", {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'content=' + encodeURIComponent(text),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.id) {
+                location.reload()
+              }
+            })
+        }
+
+        // Remove old edit/delete handlers
+        // Add event delegation for chat-feed
+        const chatFeed = document.getElementById('chat-feed')
+        if (chatFeed) {
+          chatFeed.onclick = function (e) {
+            const target = e.target
+            // Edit button
+            if (target.classList.contains('edit-btn')) {
+              const msgDiv = target.closest('.chat-message')
+              const contentSpan = msgDiv.querySelector('.chat-content')
+              const oldContent = contentSpan.textContent
+              contentSpan.innerHTML = `<textarea class="edit-area">${oldContent}</textarea>
+                <button class="save-edit">Save</button>
+                <button class="cancel-edit">Cancel</button>`
+              msgDiv.querySelector('.save-edit').onclick = function () {
+                const newContent = msgDiv
+                  .querySelector('.edit-area')
+                  .value.trim()
+                fetch(`/api/messages/${msgDiv.dataset.id}/edit/`, {
+                  method: 'POST',
+                  headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: 'content=' + encodeURIComponent(newContent),
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    if (data.success) {
+                      contentSpan.textContent = data.content
+                    }
+                  })
+              }
+              msgDiv.querySelector('.cancel-edit').onclick = function () {
+                contentSpan.textContent = oldContent
+              }
+            }
+            // Delete button
+            if (target.classList.contains('delete-btn')) {
+              if (!confirm('Delete this message?')) return
+              const msgDiv = target.closest('.chat-message')
+              fetch(`/api/messages/${msgDiv.dataset.id}/delete/`, {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': '{{ csrf_token }}',
+                },
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.success) {
+                    msgDiv.remove()
+                  }
+                })
+            }
+          }
+        }
+
+        function setChatSidebar(open) {
+          var sidebar = document.querySelector('.chat-sidebar')
+          var closeBtn = document.getElementById('close-chat-btn')
+          var openBtn = document.getElementById('open-chat-btn')
+          if (!sidebar) return
+          if (window.innerWidth >= 1200) {
+            sidebar.classList.remove('open')
+            if (closeBtn) closeBtn.style.display = 'none'
+            if (openBtn) openBtn.style.display = 'none'
+            document.body.classList.remove('chat-open')
+            return
+          }
+          if (open) {
+            sidebar.classList.add('open')
+            if (openBtn) openBtn.style.display = 'none'
+            if (closeBtn) closeBtn.style.display = 'block'
+            document.body.classList.add('chat-open')
+          } else {
+            sidebar.classList.remove('open')
+            if (openBtn) openBtn.style.display = 'flex'
+            if (closeBtn) closeBtn.style.display = 'none'
+            document.body.classList.remove('chat-open')
+          }
+        }
+        document.getElementById('open-chat-btn').onclick = function () {
+          setChatSidebar(true)
+        }
+        window.addEventListener('DOMContentLoaded', function () {
+          var chatHeader = document.querySelector('.chat-header')
+          if (chatHeader && !document.getElementById('close-chat-btn')) {
+            var btn = document.createElement('button')
+            btn.id = 'close-chat-btn'
+            btn.className = 'close-chat-btn'
+            btn.innerHTML = '✕'
+            btn.style.display = 'none'
+            btn.onclick = function () {
+              setChatSidebar(false)
+            }
+            chatHeader.appendChild(btn)
+          }
+          setChatSidebar(window.innerWidth < 1200 ? false : true)
+        })
+        window.addEventListener('resize', function () {
+          setChatSidebar(window.innerWidth < 1200 ? false : true)
+        })
       })
     </script>
   </body>

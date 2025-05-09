@@ -13,6 +13,8 @@ from .utils import map_properties_to_form_initial, FORM_LABEL_TO_PROPERTY_LABEL
 from django.contrib.auth import logout
 from django.http import HttpResponseForbidden
 from django.urls import reverse
+from backend.nodes.models import ContributionMessage
+from django.contrib.auth.models import User
 
 def custom_logout_view(request):
     logout(request)
@@ -135,10 +137,14 @@ def board_detail(request, board_id):
     board = Board.objects.get(id=board_id)
     nodes = board.nodes.all()  # all nodes related to this board
     is_board_editor = (board.owner == request.user) or board.editors.filter(user=request.user).exists()
+    messages = ContributionMessage.objects.filter(board=board).order_by('created_at')
+    contributors = User.objects.filter(contributionmessage__board=board).distinct()
     return render(request, 'registration/board_detail.html', {
         'board': board,
         'nodes': nodes,
         'is_board_editor': is_board_editor,
+        'messages': messages,
+        'contributors': contributors,
     })
 
 

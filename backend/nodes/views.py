@@ -3,10 +3,10 @@ from .serializers import NodeSerializer
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Node, Board, ManualEdge, Edge
+from .models import Node, Board, ManualEdge, Edge, ContributionMessage
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 import json
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from backend.nodes.models import EditRequest, BoardEditor
 
@@ -211,3 +211,40 @@ def mark_edit_request_read(request, request_id):
         return JsonResponse({'status': 'ok'})
     except EditRequest.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Request not found.'}, status=404)
+
+@login_required
+@require_http_methods(["POST"])
+def post_message(request, board_id):
+    content = request.POST.get("content", "").strip()
+    if not content:
+        return JsonResponse({"error": "Empty message"}, status=400)
+    board = get_object_or_404(Board, id=board_id)
+    msg = ContributionMessage.objects.create(board=board, user=request.user, content=content)
+    return JsonResponse({
+        "id": msg.id,
+        "user": request.user.username,
+        "content": msg.content,
+        "created_at": msg.created_at.strftime("%Y-%m-%d %H:%M"),
+    })
+
+@login_required
+@require_http_methods(["POST"])
+def edit_message(request, message_id):
+    msg = get_object_or_404(ContributionMessage, id=message_id)
+    if msg.user != request.user:
+        return JsonResponse({"error": "Permission denied"}, status=403)
+    content = request.POST.get("content", "").strip()
+    if not content:
+        return JsonResponse({"error": "Empty message"}, status=400)
+    msg.content = content
+    msg.save()
+    return JsonResponse({"success": True, "content": msg.content})
+
+@login_required
+@require_http_methods(["POST"])
+def delete_message(request, message_id):
+    msg = get_object_or_404(ContributionMessage, id=message_id)
+    if msg.user != request.user:
+        return JsonResponse({"error": "Permission denied"}, status=403)
+    msg.delete()
+    return JsonResponse({"success": True})

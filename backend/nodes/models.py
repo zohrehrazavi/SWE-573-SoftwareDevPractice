@@ -76,3 +76,13 @@ class BoardEditor(models.Model):
 
     class Meta:
         unique_together = ('board', 'user')
+
+class ContributionMessage(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='contribution_messages')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.content[:30]}"
