@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from backend.nodes.models import Board
 from backend.nodes.models import Node
+from .models import SecurityQuestion, UserSecurityAnswer
 
 class NodeForm(forms.ModelForm):
     class Meta:
@@ -13,17 +14,28 @@ class NodeForm(forms.ModelForm):
 class CustomUserCreationForm(UserCreationForm):
     age_confirmation = forms.BooleanField(
         required=True,
-        label="I'm over 18 years old"
+        label="I'm over 18 years old",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    elementary_school = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your elementary school name'
+        })
     )
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'age_confirmation']
+        fields = ['username', 'password1', 'password2', 'age_confirmation', 'elementary_school']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.help_text = None
+            if isinstance(field.widget, forms.TextInput) or isinstance(field.widget, forms.PasswordInput):
+                field.widget.attrs.update({'class': 'form-control'})
 
 class BoardForm(forms.ModelForm):
     board_tags = forms.CharField(
@@ -98,3 +110,46 @@ class ManualPropertyForm(forms.Form):
     name_in_native_language = forms.CharField(label='Name in Native Language', required=False)
     applies_to_part = forms.CharField(label='Applies to Part (e.g., scarf)', required=False)
     point_in_time = forms.CharField(label='Point in Time (e.g., date of report)', required=False)
+
+class PasswordResetRequestForm(forms.Form):
+    username = forms.CharField(
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    answer = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your elementary school name'
+        })
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Since we only have one question now, we can remove the dropdown
+        # and just show the static question text
+        self.security_question = "What was your elementary school name?"
+
+class SetNewPasswordForm(forms.Form):
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(),
+        required=True,
+        label="New Password"
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(),
+        required=True,
+        label="Confirm New Password"
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('new_password1')
+        password2 = cleaned_data.get('new_password2')
+        
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        
+        return cleaned_data

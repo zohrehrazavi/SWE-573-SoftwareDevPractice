@@ -1,25 +1,30 @@
 # user_auth/views.py
-from .forms import CustomUserCreationForm
-from .forms import BoardForm
+from .forms import (
+    CustomUserCreationForm,
+    BoardForm,
+    NodeForm,
+    ManualPropertyForm,
+    PasswordResetRequestForm,
+    SetNewPasswordForm
+)
 from backend.nodes.models import Board, Node
-from .forms import NodeForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from backend.nodes.models import Node
 from .utils import fetch_wikidata_properties_by_name
 from django.contrib import messages
-from .forms import ManualPropertyForm
 from .utils import map_properties_to_form_initial, FORM_LABEL_TO_PROPERTY_LABEL
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
 from django.http import HttpResponseForbidden, JsonResponse
 from django.urls import reverse
 from backend.nodes.models import ContributionMessage
 from django.contrib.auth.models import User
 from django.db import models
+from .models import SecurityQuestion, UserSecurityAnswer
 
 def custom_logout_view(request):
     logout(request)
-    return render(request, "registration/logged_out.html")
+    return render(request, 'registration/logout.html')
 
 
 
@@ -172,7 +177,20 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            
+            # Create elementary school security question if it doesn't exist
+            question, _ = SecurityQuestion.objects.get_or_create(
+                question_type='elementary_school'
+            )
+            
+            # Save security answer
+            UserSecurityAnswer.objects.create(
+                user=user,
+                question=question,
+                answer=form.cleaned_data['elementary_school'].lower().strip()
+            )
+            
             return redirect('login')
     else:
         form = CustomUserCreationForm()
@@ -300,3 +318,74 @@ def update_board_description(request, board_id):
     board.save()
     
     return JsonResponse({'success': True})
+
+def password_reset_request(request):
+    # Ensure the elementary school security question exists
+    SecurityQuestion.objects.get_or_create(question_type='elementary_school')
+    
+    if request.method == 'POST':
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            answer = form.cleaned_data['answer'].lower().strip()
+            
+            try:
+                user = User.objects.get(username=username)
+                security_answer = UserSecurityAnswer.objects.get(
+                    user=user,
+                    question__question_type='elementary_school'
+                )
+                
+                if security_answer.answer == answer:
+                    request.session['reset_user_id'] = user.id
+                    return redirect('password_reset_confirm')
+                else:
+                    form.add_error(None, "The answer is incorrect.")
+            except (User.DoesNotExist, UserSecurityAnswer.DoesNotExist):
+                form.add_error(None, "User not found or security question not set.")
+    else:
+        form = PasswordResetRequestForm()
+    
+    return render(request, 'registration/password_reset_request.html', {'form': form})
+
+def password_reset_confirm(request):
+    # Check if user is authorized to reset password
+    user_id = request.session.get('reset_user_id')
+    if not user_id:
+        return redirect('password_reset_request')
+    
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return redirect('password_reset_request')
+    
+    if request.method == 'POST':
+        form = SetNewPasswordForm(request.POST)
+        if form.is_valid():
+            # Set new password
+            user.set_password(form.cleaned_data['new_password1'])
+            user.save()
+            
+            # Clear session
+            del request.session['reset_user_id']
+            
+            return redirect('login')
+    else:
+        form = SetNewPasswordForm()
+    
+    return render(request, 'registration/password_reset_confirm.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password. Please try again.')
+            return render(request, 'registration/login.html')
+    
+    return render(request, 'registration/login.html')
