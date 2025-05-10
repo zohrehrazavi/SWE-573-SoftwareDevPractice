@@ -67,8 +67,13 @@ python manage.py test backend.user_auth.tests
    - Checks property placement within appropriate sections
 
 6. **Add Property Form Rendering** (`test_add_property_form_renders_all_fields`)
+
    - Tests that the Add/Edit Property form renders all new investigative fields
    - Loads the add property page and checks for all new field labels in the HTML
+
+7. **Edit Node Name and Description** (`test_edit_node_name_and_description`)
+   - Tests editing a node's name and description via the edit_node view
+   - Ensures changes are saved and visible on the node detail page
 
 ## Test Data
 

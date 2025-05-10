@@ -421,3 +421,19 @@ def login_view(request):
             return render(request, 'registration/login.html')
     
     return render(request, 'registration/login.html')
+
+@login_required
+def edit_node(request, node_id):
+    node = get_object_or_404(Node, id=node_id)
+    # Only allow node creator or board owner to edit
+    if not (node.created_by == request.user or node.board.owner == request.user):
+        return HttpResponseForbidden("You do not have permission to edit this node.")
+
+    if request.method == 'POST':
+        form = NodeForm(request.POST, instance=node)
+        if form.is_valid():
+            form.save()
+            return redirect('node_detail', node_id=node.id)
+    else:
+        form = NodeForm(instance=node)
+    return render(request, 'registration/edit_node.html', {'form': form, 'node': node})

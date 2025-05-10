@@ -321,4 +321,19 @@ class PropertyHandlingTestCase(TestCase):
             'Discovery Date', 'Discovery Location', 'Discovered By'
         ]
         for label in expected_labels:
-            self.assertIn(label, response.content.decode()) 
+            self.assertIn(label, response.content.decode())
+
+    def test_edit_node_name_and_description(self):
+        """Test editing a node's name and description via the edit_node view"""
+        # Edit node
+        response = self.client.get(reverse('edit_node', args=[self.node.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Edit Node')
+        # Post new name and description
+        new_data = {'name': 'Updated Node Name', 'description': 'Updated node description.'}
+        response = self.client.post(reverse('edit_node', args=[self.node.id]), new_data)
+        self.assertRedirects(response, reverse('node_detail', args=[self.node.id]))
+        # Check changes on detail page
+        response = self.client.get(reverse('node_detail', args=[self.node.id]))
+        self.assertContains(response, 'Updated Node Name')
+        self.assertContains(response, 'Updated node description.') 

@@ -169,6 +169,135 @@
         {% endif %}
       </div>
     </section>
+
+    <!-- Report Details -->
+    <section class="property-section">
+      <h2>Report Details</h2>
+      <div class="property-list">
+        {% if node.properties.report_title %}
+        <div class="property-item">
+          <span class="property-label">Report Title:</span>
+          <span class="property-value">{{ node.properties.report_title }}</span>
+        </div>
+        {% endif %} {% if node.properties.report_source %}
+        <div class="property-item">
+          <span class="property-label">Report Source:</span>
+          <span class="property-value">
+            {{ node.properties.report_source }}
+          </span>
+        </div>
+        {% endif %} {% if node.properties.report_date %}
+        <div class="property-item">
+          <span class="property-label">Report Date:</span>
+          <span class="property-value">{{ node.properties.report_date }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Witness Information -->
+    <section class="property-section">
+      <h2>Witness Information</h2>
+      <div class="property-list">
+        {% if node.properties.witness_name %}
+        <div class="property-item">
+          <span class="property-label">Witness Name:</span>
+          <span class="property-value">{{ node.properties.witness_name }}</span>
+        </div>
+        {% endif %} {% if node.properties.witness_account %}
+        <div class="property-item">
+          <span class="property-label">Witness Account:</span>
+          <span class="property-value">
+            {{ node.properties.witness_account }}
+          </span>
+        </div>
+        {% endif %} {% if node.properties.statement_platform %}
+        <div class="property-item">
+          <span class="property-label">Statement Platform:</span>
+          <span class="property-value">
+            {{ node.properties.statement_platform }}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Event Information -->
+    <section class="property-section">
+      <h2>Event Information</h2>
+      <div class="property-list">
+        {% if node.properties.event_type %}
+        <div class="property-item">
+          <span class="property-label">Event Type:</span>
+          <span class="property-value">{{ node.properties.event_type }}</span>
+        </div>
+        {% endif %} {% if node.properties.event_date %}
+        <div class="property-item">
+          <span class="property-label">Event Date:</span>
+          <span class="property-value">{{ node.properties.event_date }}</span>
+        </div>
+        {% endif %} {% if node.properties.event_location %}
+        <div class="property-item">
+          <span class="property-label">Event Location:</span>
+          <span class="property-value">
+            {{ node.properties.event_location }}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Media Evidence -->
+    <section class="property-section">
+      <h2>Media Evidence</h2>
+      <div class="property-list">
+        {% if node.properties.media_title %}
+        <div class="property-item">
+          <span class="property-label">Media Title:</span>
+          <span class="property-value">{{ node.properties.media_title }}</span>
+        </div>
+        {% endif %} {% if node.properties.media_source %}
+        <div class="property-item">
+          <span class="property-label">Media Source:</span>
+          <span class="property-value">{{ node.properties.media_source }}</span>
+        </div>
+        {% endif %} {% if node.properties.media_date %}
+        <div class="property-item">
+          <span class="property-label">Media Date:</span>
+          <span class="property-value">{{ node.properties.media_date }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Discovery Information -->
+    <section class="property-section">
+      <h2>Discovery Information</h2>
+      <div class="property-list">
+        {% if node.properties.discovery_date %}
+        <div class="property-item">
+          <span class="property-label">Discovery Date:</span>
+          <span class="property-value">
+            {{ node.properties.discovery_date }}
+          </span>
+        </div>
+        {% endif %} {% if node.properties.discovery_location %}
+        <div class="property-item">
+          <span class="property-label">Discovery Location:</span>
+          <span class="property-value">
+            {{ node.properties.discovery_location }}
+          </span>
+        </div>
+        {% endif %} {% if node.properties.discovered_by %}
+        <div class="property-item">
+          <span class="property-label">Discovered By:</span>
+          <span class="property-value">
+            {{ node.properties.discovered_by }}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </section>
   </div>
 
   <div class="action-buttons">
@@ -190,6 +319,13 @@
         Add/Edit Property
       </button>
     </form>
+    <a
+      href="{% url 'edit_node' node.id %}"
+      class="secondary-btn"
+      style="display: inline-block; margin-left: 8px;"
+    >
+      Edit Node
+    </a>
     <form
       action="{% url 'delete_node' node.id %}"
       method="post"
