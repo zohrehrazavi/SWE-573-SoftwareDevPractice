@@ -480,7 +480,7 @@
                     style: {
                       'background-color': 'data(user_color)',
                       'border-color': '#2980b9',
-                      'border-width': '2px',
+                      'border-width': 'data(borderWidth)',
                       label: 'data(label)',
                       'text-valign': 'center',
                       'text-halign': 'center',
@@ -558,6 +558,21 @@
                   minTemp: 1.0,
                 },
               })
+
+              // Set borderWidth based on number of connections
+              cy.nodes().forEach(function (node) {
+                const degree = node.connectedEdges().length
+                let borderWidth = 2
+                if (degree >= 5) borderWidth = 6
+                else if (degree >= 3) borderWidth = 4
+                node.data('borderWidth', borderWidth)
+              })
+
+              // Update style to apply the new borderWidth
+              cy.style()
+                .selector('node')
+                .style({ 'border-width': 'data(borderWidth)' })
+                .update()
 
               // Overlay delete icon for nodes/edges the user can delete
               const currentUserId = parseInt('{{ user.id }}')
