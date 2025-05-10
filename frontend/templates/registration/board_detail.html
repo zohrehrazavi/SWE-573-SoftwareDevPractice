@@ -109,6 +109,10 @@
       {% endif %}
       <a href="{% url 'home' %}" class="back-btn">← Back to Home</a>
       <div class="controls">
+        <div class="view-toggle">
+          <button class="view-btn active" id="graphViewBtn">Graph View</button>
+          <button class="view-btn" id="timelineViewBtn">Timeline View</button>
+        </div>
         <div class="mode-button" id="viewMode">View Properties</div>
         {% if is_board_editor %}
         <div class="mode-button" id="connectMode">Connect Nodes</div>
@@ -117,6 +121,9 @@
         {% endif %}
       </div>
       <div id="cy"></div>
+      <div id="timeline" class="timeline-container" style="display: none;">
+        <div class="timeline-content"></div>
+      </div>
       {% if not is_board_editor %}
       <div id="editRequestStatusArea">
         <button class="ask-edit-btn" id="askEditBtn">Ask for Edit</button>
@@ -292,6 +299,126 @@
           })
         }
 
+        const graphViewBtn = document.getElementById('graphViewBtn')
+        const timelineViewBtn = document.getElementById('timelineViewBtn')
+        const cyContainer = document.getElementById('cy')
+        const timelineContainer = document.getElementById('timeline')
+        const timelineContent = document.querySelector('.timeline-content')
+
+        // View toggle functionality
+        function switchToGraphView() {
+          graphViewBtn.classList.add('active')
+          timelineViewBtn.classList.remove('active')
+          cyContainer.style.display = 'block'
+          timelineContainer.style.display = 'none'
+        }
+
+        function switchToTimelineView() {
+          timelineViewBtn.classList.add('active')
+          graphViewBtn.classList.remove('active')
+          cyContainer.style.display = 'none'
+          timelineContainer.style.display = 'block'
+          renderTimeline()
+        }
+
+        graphViewBtn.addEventListener('click', switchToGraphView)
+        timelineViewBtn.addEventListener('click', switchToTimelineView)
+
+        // Timeline rendering functionality
+        function getNodeIcon(nodeType) {
+          const icons = {
+            sighting: '👁️',
+            report: '📄',
+            event: '📅',
+            media: '📸',
+            discovery: '🔍',
+            default: '📌',
+          }
+          return icons[nodeType?.toLowerCase()] || icons.default
+        }
+
+        function getNodeDate(node) {
+          const dateProps = [
+            'point_in_time',
+            'report_date',
+            'event_date',
+            'media_date',
+            'discovery_date',
+          ]
+          for (const prop of dateProps) {
+            if (node.properties?.[prop]) {
+              return {
+                date: node.properties[prop],
+                type: prop,
+              }
+            }
+          }
+          return null
+        }
+
+        function formatDate(dateStr) {
+          const date = new Date(dateStr)
+          return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        }
+
+        function renderTimeline() {
+          if (!cy) return
+
+          const timelineEntries = []
+          cy.nodes().forEach((node) => {
+            const nodeData = node.data()
+            const dateInfo = getNodeDate(nodeData)
+
+            if (dateInfo) {
+              timelineEntries.push({
+                id: nodeData.id,
+                date: dateInfo.date,
+                type: dateInfo.type,
+                label: nodeData.label,
+                description: nodeData.description,
+                properties: nodeData.properties,
+                nodeType: nodeData.properties?.type || 'default',
+              })
+            }
+          })
+
+          // Sort entries by date
+          timelineEntries.sort((a, b) => new Date(a.date) - new Date(b.date))
+
+          // Clear and render timeline
+          timelineContent.innerHTML = ''
+          timelineEntries.forEach((entry) => {
+            const entryDiv = document.createElement('div')
+            entryDiv.className = 'timeline-entry'
+
+            const formattedDate = formatDate(entry.date)
+
+            entryDiv.innerHTML = `
+              <div class="date">${formattedDate}</div>
+              <div class="summary">${entry.label}</div>
+              ${
+                entry.description
+                  ? `<div class="description">${entry.description}</div>`
+                  : ''
+              }
+            `
+
+            // Add click handler to show node details (do NOT switch to graph view)
+            entryDiv.addEventListener('click', () => {
+              const node = cy.getElementById(entry.id)
+              if (node.length) {
+                node.trigger('tap')
+              }
+            })
+
+            timelineContent.appendChild(entryDiv)
+          })
+        }
+
         let selectedNode = null
         let selectedEdge = null
         let isConnectMode = false
@@ -407,6 +534,7 @@
               return response.json()
             })
             .then((data) => {
+              console.log('Graph data from backend:', data) // Debug log
               const elements = []
 
               // Assign user colors
@@ -1110,7 +1238,6 @@
             })
         }
 
-        // Remove old edit/delete handlers
         // Add event delegation for chat-feed
         const chatFeed = document.getElementById('chat-feed')
         if (chatFeed) {

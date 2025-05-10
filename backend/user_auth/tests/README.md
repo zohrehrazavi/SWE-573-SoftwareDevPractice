@@ -1,4 +1,12 @@
-# Test Suite Documentation
+# Test README
+
+This directory contains the test files for the user authentication module. The tests are organized as follows:
+
+- `test_auth.py`: Tests for authentication-related functionality.
+- `test_properties.py`: Tests for user properties and related features.
+- `test_security.py`: Tests for security-related functionality.
+
+Note: The `tests.py` file has been removed to avoid conflicts with Django's test discovery. All tests are now located in the `tests/` directory.
 
 ## Overview
 

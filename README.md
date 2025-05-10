@@ -146,3 +146,10 @@ The test suite includes:
 For detailed test documentation and guidelines, see [Test Documentation](backend/test/README.md).
 
 ---
+
+## Features
+
+- 🔍 **Graph Visualization**: Interactive network graph showing relationships between nodes
+- 🕒 **Timeline View**: Users can toggle to a timeline mode that displays key events (reports, sightings, discoveries) in chronological order, helping map the case's progression more clearly
+
+---

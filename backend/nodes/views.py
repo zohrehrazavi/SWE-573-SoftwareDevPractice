@@ -218,6 +218,8 @@ def post_message(request, board_id):
     content = request.POST.get("content", "").strip()
     if not content:
         return JsonResponse({"error": "Empty message"}, status=400)
+    if len(content) > 1000:
+        return JsonResponse({"error": "Message too long (max 1000 characters)"}, status=400)
     board = get_object_or_404(Board, id=board_id)
     msg = ContributionMessage.objects.create(board=board, user=request.user, content=content)
     return JsonResponse({
