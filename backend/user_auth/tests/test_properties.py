@@ -29,10 +29,36 @@ class PropertyHandlingTestCase(TestCase):
     def test_manual_property_addition(self):
         """Test adding properties manually"""
         test_properties = {
+            # Basic Information
             'instance_of': 'human',
             'occupation': 'television actor',
             'eye_color': 'Blue',
-            'hair_type': 'dirty blond hair'
+            'hair_type': 'dirty blond hair',
+            
+            # Report Details
+            'report_title': 'Initial Investigation Report',
+            'report_source': 'Local Police Department',
+            'report_date': '2024-03-15',
+            
+            # Witness Information
+            'witness_name': 'John Smith',
+            'witness_account': 'I saw the suspect enter the building at approximately 2:30 PM.',
+            'statement_platform': 'Police Interview',
+            
+            # Event Information
+            'event_type': 'Suspicious Activity',
+            'event_date': '2024-03-14',
+            'event_location': '123 Main Street',
+            
+            # Media Evidence
+            'media_title': 'Security Camera Footage',
+            'media_source': 'Building Surveillance System',
+            'media_date': '2024-03-14',
+            
+            # Discovery Information
+            'discovery_date': '2024-03-15',
+            'discovery_location': 'Parking Lot B',
+            'discovered_by': 'Officer Jane Doe'
         }
         
         response = self.client.post(
@@ -48,6 +74,31 @@ class PropertyHandlingTestCase(TestCase):
         self.assertEqual(self.node.properties.get('occupation'), 'television actor')
         self.assertEqual(self.node.properties.get('eye_color'), 'Blue')
         self.assertEqual(self.node.properties.get('hair_type'), 'dirty blond hair')
+        
+        # Check Report Details
+        self.assertEqual(self.node.properties.get('report_title'), 'Initial Investigation Report')
+        self.assertEqual(self.node.properties.get('report_source'), 'Local Police Department')
+        self.assertEqual(self.node.properties.get('report_date'), '2024-03-15')
+        
+        # Check Witness Information
+        self.assertEqual(self.node.properties.get('witness_name'), 'John Smith')
+        self.assertEqual(self.node.properties.get('witness_account'), 'I saw the suspect enter the building at approximately 2:30 PM.')
+        self.assertEqual(self.node.properties.get('statement_platform'), 'Police Interview')
+        
+        # Check Event Information
+        self.assertEqual(self.node.properties.get('event_type'), 'Suspicious Activity')
+        self.assertEqual(self.node.properties.get('event_date'), '2024-03-14')
+        self.assertEqual(self.node.properties.get('event_location'), '123 Main Street')
+        
+        # Check Media Evidence
+        self.assertEqual(self.node.properties.get('media_title'), 'Security Camera Footage')
+        self.assertEqual(self.node.properties.get('media_source'), 'Building Surveillance System')
+        self.assertEqual(self.node.properties.get('media_date'), '2024-03-14')
+        
+        # Check Discovery Information
+        self.assertEqual(self.node.properties.get('discovery_date'), '2024-03-15')
+        self.assertEqual(self.node.properties.get('discovery_location'), 'Parking Lot B')
+        self.assertEqual(self.node.properties.get('discovered_by'), 'Officer Jane Doe')
         
         # Check redirect
         self.assertRedirects(response, reverse('node_detail', args=[self.node.id]))
@@ -103,9 +154,35 @@ class PropertyHandlingTestCase(TestCase):
         # Simulate properties in session
         session = self.client.session
         session['suggested_properties'] = {
+            # Basic Information
             'instance_of': 'human',
             'occupation': 'television actor',
-            'gender': 'male'
+            'gender': 'male',
+            
+            # Report Details
+            'report_title': 'Initial Investigation Report',
+            'report_source': 'Local Police Department',
+            'report_date': '2024-03-15',
+            
+            # Witness Information
+            'witness_name': 'John Smith',
+            'witness_account': 'I saw the suspect enter the building at approximately 2:30 PM.',
+            'statement_platform': 'Police Interview',
+            
+            # Event Information
+            'event_type': 'Suspicious Activity',
+            'event_date': '2024-03-14',
+            'event_location': '123 Main Street',
+            
+            # Media Evidence
+            'media_title': 'Security Camera Footage',
+            'media_source': 'Building Surveillance System',
+            'media_date': '2024-03-14',
+            
+            # Discovery Information
+            'discovery_date': '2024-03-15',
+            'discovery_location': 'Parking Lot B',
+            'discovered_by': 'Officer Jane Doe'
         }
         session.save()
 
@@ -115,7 +192,22 @@ class PropertyHandlingTestCase(TestCase):
             {
                 'property_instance_of': 'human',
                 'property_occupation': 'television actor',
-                'property_gender': 'male'
+                'property_gender': 'male',
+                'property_report_title': 'Initial Investigation Report',
+                'property_report_source': 'Local Police Department',
+                'property_report_date': '2024-03-15',
+                'property_witness_name': 'John Smith',
+                'property_witness_account': 'I saw the suspect enter the building at approximately 2:30 PM.',
+                'property_statement_platform': 'Police Interview',
+                'property_event_type': 'Suspicious Activity',
+                'property_event_date': '2024-03-14',
+                'property_event_location': '123 Main Street',
+                'property_media_title': 'Security Camera Footage',
+                'property_media_source': 'Building Surveillance System',
+                'property_media_date': '2024-03-14',
+                'property_discovery_date': '2024-03-15',
+                'property_discovery_location': 'Parking Lot B',
+                'property_discovered_by': 'Officer Jane Doe'
             }
         )
 
@@ -126,6 +218,31 @@ class PropertyHandlingTestCase(TestCase):
         self.assertEqual(self.node.properties.get('instance_of'), 'human')
         self.assertEqual(self.node.properties.get('occupation'), 'television actor')
         self.assertEqual(self.node.properties.get('gender'), 'male')
+        
+        # Check Report Details
+        self.assertEqual(self.node.properties.get('report_title'), 'Initial Investigation Report')
+        self.assertEqual(self.node.properties.get('report_source'), 'Local Police Department')
+        self.assertEqual(self.node.properties.get('report_date'), '2024-03-15')
+        
+        # Check Witness Information
+        self.assertEqual(self.node.properties.get('witness_name'), 'John Smith')
+        self.assertEqual(self.node.properties.get('witness_account'), 'I saw the suspect enter the building at approximately 2:30 PM.')
+        self.assertEqual(self.node.properties.get('statement_platform'), 'Police Interview')
+        
+        # Check Event Information
+        self.assertEqual(self.node.properties.get('event_type'), 'Suspicious Activity')
+        self.assertEqual(self.node.properties.get('event_date'), '2024-03-14')
+        self.assertEqual(self.node.properties.get('event_location'), '123 Main Street')
+        
+        # Check Media Evidence
+        self.assertEqual(self.node.properties.get('media_title'), 'Security Camera Footage')
+        self.assertEqual(self.node.properties.get('media_source'), 'Building Surveillance System')
+        self.assertEqual(self.node.properties.get('media_date'), '2024-03-14')
+        
+        # Check Discovery Information
+        self.assertEqual(self.node.properties.get('discovery_date'), '2024-03-15')
+        self.assertEqual(self.node.properties.get('discovery_location'), 'Parking Lot B')
+        self.assertEqual(self.node.properties.get('discovered_by'), 'Officer Jane Doe')
 
         # Check redirect to node detail
         self.assertRedirects(response, reverse('node_detail', args=[self.node.id]))
@@ -187,4 +304,21 @@ class PropertyHandlingTestCase(TestCase):
         # Physical Characteristics section should contain eye_color and hair_type
         physical_char_index = content.find('Physical Characteristics')
         self.assertTrue(physical_char_index < content.find('Blue'))
-        self.assertTrue(physical_char_index < content.find('dirty blond hair')) 
+        self.assertTrue(physical_char_index < content.find('dirty blond hair'))
+
+    def test_add_property_form_renders_all_fields(self):
+        """Test that the add property form renders all new investigative fields"""
+        response = self.client.get(
+            reverse('add_manual_property', args=[self.node.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        # Check for new investigative field labels
+        expected_labels = [
+            'Report Title', 'Report Source', 'Report Date',
+            'Witness Name', 'Witness Account', 'Statement Platform',
+            'Event Type', 'Event Date', 'Event Location',
+            'Media Title', 'Media Source', 'Media Date',
+            'Discovery Date', 'Discovery Location', 'Discovered By'
+        ]
+        for label in expected_labels:
+            self.assertIn(label, response.content.decode()) 

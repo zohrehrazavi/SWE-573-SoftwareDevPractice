@@ -39,6 +39,7 @@ python manage.py test backend.user_auth.tests
    - Tests adding properties manually through forms
    - Verifies correct property name formatting (with underscores)
    - Checks proper value storage and redirects
+   - **Covers all new investigative fields (report, witness, event, media, discovery)**
 
 2. **Wikidata Property Fetching** (`test_wikidata_property_fetching`)
 
@@ -51,6 +52,7 @@ python manage.py test backend.user_auth.tests
    - Tests the approval workflow for Wikidata properties
    - Verifies session handling for suggested properties
    - Checks proper storage of approved properties
+   - **Covers all new investigative fields (report, witness, event, media, discovery)**
 
 4. **Property Display** (`test_property_display`)
 
@@ -59,17 +61,29 @@ python manage.py test backend.user_auth.tests
    - Checks presence of property values in the response
 
 5. **Property Organization** (`test_property_organization`)
+
    - Tests the organization of properties into sections
    - Verifies correct section headers
    - Checks property placement within appropriate sections
 
+6. **Add Property Form Rendering** (`test_add_property_form_renders_all_fields`)
+   - Tests that the Add/Edit Property form renders all new investigative fields
+   - Loads the add property page and checks for all new field labels in the HTML
+
 ## Test Data
 
-The test suite uses a sample node ("brad pitt") with various properties to verify functionality:
+The test suite uses a sample node ("brad pitt") and exercises all property types, including:
 
 - Basic Information (instance_of, occupation)
-- Personal Details (gender, country_of_citizenship)
-- Physical Characteristics (eye_color, hair_type)
+- Personal Details (gender, country_of_citizenship, family_name, given_name, name_in_native_language)
+- Biographical Data (date_of_birth, date_of_death, place_of_birth, place_of_death, residence, ethnic_group)
+- Physical Characteristics (eye_color, hair_color, hair_type)
+- Additional Information (title, published_in, applies_to_part, point_in_time)
+- Report Details (report_title, report_source, report_date)
+- Witness Information (witness_name, witness_account, statement_platform)
+- Event Information (event_type, event_date, event_location)
+- Media Evidence (media_title, media_source, media_date)
+- Discovery Information (discovery_date, discovery_location, discovered_by)
 
 ## Adding New Tests
 

@@ -21,6 +21,7 @@ from backend.nodes.models import ContributionMessage
 from django.contrib.auth.models import User
 from django.db import models
 from .models import SecurityQuestion, UserSecurityAnswer
+import datetime
 
 def custom_logout_view(request):
     logout(request)
@@ -75,6 +76,7 @@ def approve_node_properties(request, node_id):
     if request.method == "POST":
         approved_props = {}
         property_mapping = {
+            # Basic Information
             'instance of': 'instance_of',
             'occupation': 'occupation',
             'gender': 'gender',
@@ -90,11 +92,38 @@ def approve_node_properties(request, node_id):
             'eye color': 'eye_color',
             'hair color': 'hair_color',
             'hair type': 'hair_type',
+            
+            # Case-Specific
             'title': 'title',
             'published in': 'published_in',
             'name in native language': 'name_in_native_language',
             'applies to part': 'applies_to_part',
-            'point in time': 'point_in_time'
+            'point in time': 'point_in_time',
+            
+            # Report Details
+            'report title': 'report_title',
+            'report source': 'report_source',
+            'report date': 'report_date',
+            
+            # Witness Information
+            'witness name': 'witness_name',
+            'witness account': 'witness_account',
+            'statement platform': 'statement_platform',
+            
+            # Event Information
+            'event type': 'event_type',
+            'event date': 'event_date',
+            'event location': 'event_location',
+            
+            # Media Evidence
+            'media title': 'media_title',
+            'media source': 'media_source',
+            'media date': 'media_date',
+            
+            # Discovery Information
+            'discovery date': 'discovery_date',
+            'discovery location': 'discovery_location',
+            'discovered by': 'discovered_by'
         }
 
         for key, value in request.POST.items():
@@ -259,6 +288,9 @@ def add_manual_property(request, node_id):
                 node.properties = {}
             for field_name, value in form.cleaned_data.items():
                 if value:
+                    # Convert date objects to ISO format strings
+                    if isinstance(value, (datetime.date, datetime.datetime)):
+                        value = value.isoformat()
                     # Use the field name directly as it already has underscores
                     node.properties[field_name] = value
             node.save()

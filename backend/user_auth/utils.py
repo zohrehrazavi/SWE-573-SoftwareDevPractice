@@ -24,7 +24,24 @@ WIKIDATA_PROPERTIES = {
     "P1433": "published_in",         # Source
     "P1559": "name_in_native_language", # For aliases/nicknames
     "P518": "applies_to_part",       # e.g., "scarf" in forensic report
-    "P585": "point_in_time"          # Date of event, sighting, etc.
+    "P585": "point_in_time",         # Date of event, sighting, etc.
+    
+    # Investigative Properties (Manual Entry Only)
+    "report_title": "report_title",
+    "report_source": "report_source",
+    "report_date": "report_date",
+    "witness_name": "witness_name",
+    "witness_account": "witness_account",
+    "statement_platform": "statement_platform",
+    "event_type": "event_type",
+    "event_date": "event_date",
+    "event_location": "event_location",
+    "media_title": "media_title",
+    "media_source": "media_source",
+    "media_date": "media_date",
+    "discovery_date": "discovery_date",
+    "discovery_location": "discovery_location",
+    "discovered_by": "discovered_by"
 }
 
 
@@ -83,6 +100,7 @@ def get_label_from_wikidata_id(qid):
 
 # Maps form field names to human-readable labels
 FORM_LABEL_TO_PROPERTY_LABEL = {
+    # Basic Information
     "instance_of": "instance of",
     "occupation": "occupation",
     "gender": "gender",
@@ -98,11 +116,38 @@ FORM_LABEL_TO_PROPERTY_LABEL = {
     "eye_color": "eye color",
     "hair_color": "hair color",
     "hair_type": "hair type",
+    
+    # Case-Specific
     "title": "title",
     "published_in": "published in",
     "name_in_native_language": "name in native language",
     "applies_to_part": "applies to part",
     "point_in_time": "point in time",
+    
+    # Report Details
+    "report_title": "report title",
+    "report_source": "report source",
+    "report_date": "report date",
+    
+    # Witness Information
+    "witness_name": "witness name",
+    "witness_account": "witness account",
+    "statement_platform": "statement platform",
+    
+    # Event Information
+    "event_type": "event type",
+    "event_date": "event date",
+    "event_location": "event location",
+    
+    # Media Evidence
+    "media_title": "media title",
+    "media_source": "media source",
+    "media_date": "media date",
+    
+    # Discovery Information
+    "discovery_date": "discovery date",
+    "discovery_location": "discovery location",
+    "discovered_by": "discovered by"
 }
 
 # Converts stored node properties (human-readable) into form-compatible keys

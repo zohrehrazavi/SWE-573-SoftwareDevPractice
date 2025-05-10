@@ -85,13 +85,13 @@ class BoardForm(forms.ModelForm):
         return unique_tags
 
 class ManualPropertyForm(forms.Form):
-    # Existing general properties
+    # Basic Information
     instance_of = forms.CharField(label='Instance of (Wikidata ID)', required=False)
     occupation = forms.CharField(label='Occupation (Wikidata ID)', required=False)
     gender = forms.CharField(label='Gender (Wikidata ID)', required=False)
     country_of_citizenship = forms.CharField(label='Country of Citizenship (Wikidata ID)', required=False)
 
-    # Human-specific
+    # Personal Details
     date_of_birth = forms.CharField(label='Date of Birth (Wikidata ID)', required=False)
     date_of_death = forms.CharField(label='Date of Death (Wikidata ID)', required=False)
     place_of_birth = forms.CharField(label='Place of Birth (Wikidata ID)', required=False)
@@ -110,6 +110,31 @@ class ManualPropertyForm(forms.Form):
     name_in_native_language = forms.CharField(label='Name in Native Language', required=False)
     applies_to_part = forms.CharField(label='Applies to Part (e.g., scarf)', required=False)
     point_in_time = forms.CharField(label='Point in Time (e.g., date of report)', required=False)
+
+    # Report Details
+    report_title = forms.CharField(label='Report Title', required=False)
+    report_source = forms.CharField(label='Report Source', required=False)
+    report_date = forms.DateField(label='Report Date', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+
+    # Witness Information
+    witness_name = forms.CharField(label='Witness Name', required=False)
+    witness_account = forms.CharField(label='Witness Account', required=False, widget=forms.Textarea(attrs={'rows': 4}))
+    statement_platform = forms.CharField(label='Statement Platform', required=False)
+
+    # Event Information
+    event_type = forms.CharField(label='Event Type', required=False)
+    event_date = forms.DateField(label='Event Date', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    event_location = forms.CharField(label='Event Location', required=False)
+
+    # Media Evidence
+    media_title = forms.CharField(label='Media Title', required=False)
+    media_source = forms.CharField(label='Media Source', required=False)
+    media_date = forms.DateField(label='Media Date', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+
+    # Discovery Information
+    discovery_date = forms.DateField(label='Discovery Date', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    discovery_location = forms.CharField(label='Discovery Location', required=False)
+    discovered_by = forms.CharField(label='Discovered By', required=False)
 
 class PasswordResetRequestForm(forms.Form):
     username = forms.CharField(
